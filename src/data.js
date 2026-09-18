@@ -1,0 +1,4 @@
+export const courses=[
+{id:'01',type:'STRENGTH',duration:'6 WEEKS',level:'BEGINNER — ADVANCED',title:'Build Muscle & Get Stronger',text:'Progressive strength training for every level.',image:'https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?fm=webp&fit=crop&w=1600&q=94',alt:'Man completing a focused strength training exercise'},
+{id:'02',type:'MOBILITY',duration:'4 WEEKS',level:'ALL LEVELS',title:'Improve Flexibility & Reduce Stress',text:'Move better, breathe deeper and feel balanced.',image:'https://images.unsplash.com/photo-1599447421416-3414500d18a5?fm=webp&fit=crop&w=1600&q=94',alt:'Woman practicing yoga and guided mobility training'},
+{id:'03',type:'HIIT',duration:'4 WEEKS',level:'INTERMEDIATE',title:'Burn Calories & Boost Energy',text:'Fast-paced sessions that keep you moving.',image:'https://images.unsplash.com/photo-1517963879433-6ad2b056d712?fm=webp&fit=crop&w=1600&q=94',alt:'Athlete performing a high-intensity interval workout'}];

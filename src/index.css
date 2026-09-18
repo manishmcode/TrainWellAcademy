@@ -1,0 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&display=swap');
+@tailwind base;@tailwind components;@tailwind utilities;
+@layer base{html{scroll-behavior:smooth}body{@apply m-0 bg-cream text-ink font-sans antialiased}button,a{@apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-coral}img{@apply block h-full w-full object-cover}}
+@layer components{.shell{@apply mx-auto w-[92%]}.eyebrow{@apply text-sm font-bold tracking-[.14em]}.display{@apply font-display uppercase tracking-[-.045em] leading-[.92];font-size:clamp(2.75rem,4vw,5rem)!important}.btn{@apply inline-flex items-center justify-center bg-ink px-5 py-4 text-sm font-bold text-cream transition hover:bg-coral}.reveal{@apply transition duration-500}}
+
+/* Library layout uses explicit breakpoints so it remains stable in embedded previews. */
+.library-browser-layout{display:grid;grid-template-columns:280px minmax(0,1fr)}
+.library-module-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+.library-page *{border-radius:0!important}
+@media (max-width:1180px){.library-module-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:860px){.library-browser-layout{display:block}.library-browser-layout>aside{position:static;margin-bottom:1.75rem}.library-module-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.library-module-grid{grid-template-columns:minmax(0,1fr)}}
