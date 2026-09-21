@@ -1,5 +1,6 @@
 import { ArrowRight, Check, KeyRound, UserPlus } from 'lucide-react';
 import { useState } from 'react';
+import { company } from '../company';
 import Footer from './Footer';
 import Header from './Header';
 
@@ -37,7 +38,7 @@ export default function Signup() {
                     <div className="grid size-14 place-items-center bg-coral text-ink"><Check size={26} /></div>
                     <span className="eyebrow mt-7 block text-coral">ACCOUNT CREATED</span>
                     <h2 className="display mt-4 text-5xl md:text-6xl">WELCOME<br /><em className="not-italic text-coral">ABOARD.</em></h2>
-                    <p className="mt-6 leading-7 text-ink/60">Your personalized TrainWellAcademy.net library is ready to explore.</p>
+                    <p className="mt-6 leading-7 text-ink/60">Your personalized {company.siteName} library is ready to explore.</p>
                     <a href="/#courses" className="btn mt-8 gap-3">OPEN MY LIBRARY <ArrowRight size={17} /></a>
                   </div>
                 ) : (

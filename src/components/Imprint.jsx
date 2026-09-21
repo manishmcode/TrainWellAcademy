@@ -1,7 +1,6 @@
-import { ArrowRight, Check, KeyRound, LogIn } from 'lucide-react';
-import { useState } from 'react';
 import Footer from './Footer';
 import Header from './Header';
+import { company, supportMailto } from '../company';
 export default function Imprint() {
   return (
        
@@ -12,26 +11,22 @@ export default function Imprint() {
           <div>
             <span className="eyebrow text-coral">IMPRINT</span>
             <h1 className="display mt-5 text-4xl md:text-5xl">THE DETAILS<br /><em className="not-italic text-coral">BEHIND TRAINWELL.</em></h1>
-            <p className="mt-5 max-w-sm leading-7 text-ink/60">Company information and legal details for the TrainWellAcademy.net fitness learning platform.</p>
+            <p className="mt-5 max-w-sm leading-7 text-ink/60">Company information and legal details for the {company.siteName} fitness learning platform.</p>
           </div>
           <div className="grid gap-8 text-sm leading-7 text-ink/65 sm:grid-cols-2">
             <div>
               <h3 className="mb-3 font-bold text-ink">Company</h3>
-              <p>TrainWellAcademy GmbH</p>
-              <p>123 Wellness Drive</p>
-              <p>10115 Berlin, Germany</p>
-              <p className="mt-3">Managing Director: Alex Morgan</p>
+              <p>{company.legalName}</p>
+              {company.addressLines.map(line => <p key={line}>{line}</p>)}
+              <p className="mt-3">Tax number: {company.taxNumber}</p>
             </div>
             <div>
               <h3 className="mb-3 font-bold text-ink">Contact</h3>
-              <p>Phone: +49 30 12345678</p>
-              <p>Email: <a className="font-bold text-coral" href="mailto:support@trainwellacademy.net">support@trainwellacademy.net</a></p>
-              <p className="mt-3">Registered at the Berlin-Charlottenburg Local Court</p>
-              <p>Registration number: HRB 123456</p>
+              <p>Email: <a className="font-bold text-coral" href={supportMailto}>{company.supportEmail}</a></p>
             </div>
             <div className="border-t border-ink/15 pt-6 sm:col-span-2">
               <h3 className="mb-3 font-bold text-ink">Content Responsibility</h3>
-              <p>Responsible for the content under Section 18 paragraph 2 of the German State Media Treaty: Alex Morgan, TrainWellAcademy GmbH, 123 Wellness Drive, 10115 Berlin, Germany.</p>
+              <p>Responsible for the content on this website: {company.legalName}, {company.addressLines.join(', ')}.</p>
             </div>
             <div className="border-t border-ink/15 pt-6 sm:col-span-2">
               <h3 className="mb-3 font-bold text-ink">Dispute Resolution</h3>

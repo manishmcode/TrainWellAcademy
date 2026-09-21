@@ -1,5 +1,6 @@
 import { ArrowLeft, ArrowRight, Check, LockKeyhole, Mail, ShieldCheck, UserRound } from 'lucide-react';
 import { useState } from 'react';
+import { company } from '../company';
 import Footer from './Footer';
 import Header from './Header';
 
@@ -28,7 +29,7 @@ export default function Unsubscribe() {
               WE’RE SORRY TO<br /><em className="not-italic text-coral">SEE YOU GO.</em>
             </h1>
             <p className="mt-8 max-w-lg text-base leading-7 text-cream/60">
-              To cancel your subscription, enter your details and the last five digits of your IBAN. Your request will be submitted to TrainWellAcademy.net support for processing.
+              To cancel your subscription, enter your details and the last five digits of your IBAN. Your request will be submitted to {company.siteName} support for processing.
             </p>
           </div>
           <div className="pointer-events-none absolute -right-24 -top-40 size-[34rem] rounded-full border border-coral/15" aria-hidden="true" />
@@ -48,7 +49,7 @@ export default function Unsubscribe() {
                   <p>Confirmation usually arrives within one business day. You don’t need to submit another request.</p>
                 </div>
                 <a href="/" className="btn group mt-8 gap-3">
-                  Back to TrainWell <ArrowRight className="transition-transform group-hover:translate-x-1" size={17} />
+                  Back to {company.brandShortName} <ArrowRight className="transition-transform group-hover:translate-x-1" size={17} />
                 </a>
               </div>
             ) : (

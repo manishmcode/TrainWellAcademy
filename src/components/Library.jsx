@@ -1,5 +1,6 @@
 import { ArrowUpRight, BookOpen, CalendarDays, Play, Radio, Search } from 'lucide-react';
 import { useMemo, useState } from 'react';
+import { company } from '../company';
 import { courses } from '../data';
 import Footer from './Footer';
 import Header from './Header';
@@ -85,7 +86,7 @@ export default function Library() {
           </div>
         ) : (
           <section className="mt-8 rounded-3xl border border-ink/10 bg-white p-6 shadow-[0_14px_40px_rgba(23,27,25,0.06)] md:p-8">
-            <div className="flex flex-col justify-between gap-4 border-b border-ink/10 pb-6 sm:flex-row sm:items-end"><div><span className="text-xs font-bold tracking-[.12em] text-coral">TRAIN TOGETHER</span><h1 className="mt-2 text-3xl font-bold">Upcoming live classes</h1><p className="mt-2 text-sm text-ink/45">Real-time sessions with TrainWellAcademy.net coaches.</p></div><CalendarDays className="text-coral" size={32} /></div>
+            <div className="flex flex-col justify-between gap-4 border-b border-ink/10 pb-6 sm:flex-row sm:items-end"><div><span className="text-xs font-bold tracking-[.12em] text-coral">TRAIN TOGETHER</span><h1 className="mt-2 text-3xl font-bold">Upcoming live classes</h1><p className="mt-2 text-sm text-ink/45">Real-time sessions with {company.siteName} coaches.</p></div><CalendarDays className="text-coral" size={32} /></div>
             <div className="mt-6 grid gap-5 md:grid-cols-3">{liveClasses.map((session) => <article key={session.title} className="overflow-hidden rounded-2xl border border-ink/10"><div className="h-44"><img src={session.image} alt="" /></div><div className="p-5"><span className="text-[10px] font-bold tracking-[.1em] text-coral">{session.date}</span><h2 className="mt-2 font-bold">{session.title}</h2><p className="mt-2 text-xs text-ink/45">{session.coach}</p><a href="/checkout" className="mt-5 flex items-center justify-between border-t border-ink/10 pt-4 text-[10px] font-bold">RESERVE A SPOT <ArrowUpRight size={14} /></a></div></article>)}</div>
           </section>
         )}

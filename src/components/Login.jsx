@@ -1,5 +1,6 @@
 import { ArrowRight, Check, KeyRound, LogIn } from 'lucide-react';
 import { useState } from 'react';
+import { company } from '../company';
 import Footer from './Footer';
 import Header from './Header';
 
@@ -37,7 +38,7 @@ export default function Login() {
                     <div className="grid size-14 place-items-center bg-coral text-ink"><Check size={26} /></div>
                     <span className="eyebrow mt-7 block text-coral">WELCOME BACK</span>
                     <h2 className="display mt-4 text-5xl md:text-6xl">YOU’RE IN.</h2>
-                    <p className="mt-6 leading-7 text-ink/60">Your TrainWellAcademy.net library is ready. We’ll take you back to your programs now.</p>
+                    <p className="mt-6 leading-7 text-ink/60">Your {company.siteName} library is ready. We’ll take you back to your programs now.</p>
                     <a href="/#courses" className="btn mt-8 gap-3">OPEN MY LIBRARY <ArrowRight size={17} /></a>
                   </div>
                 ) : (
@@ -51,7 +52,7 @@ export default function Login() {
                     <form onSubmit={submit} className="space-y-6">
                       <label className="block text-[11px] font-bold tracking-[.16em] text-ink/55">EMAIL ADDRESS <span className="text-coral">*</span><input className={inputClass} type="email" name="email" autoComplete="email" placeholder="you@example.com" required /></label>
                       <label className="block text-[11px] font-bold tracking-[.16em] text-ink/55">PASSWORD <span className="text-coral">*</span><input className={inputClass} type="password" name="password" autoComplete="current-password" placeholder="Enter your password" required /></label>
-                      <div className="flex items-center justify-between gap-4 text-sm"><label className="flex items-center gap-2 text-ink/60"><input type="checkbox" className="size-4 accent-coral" /> Remember me</label><a href="mailto:support@trainwellacademy.net?subject=Password%20reset" className="font-bold text-coral hover:text-ink">Forgot password?</a></div>
+                      <div className="flex items-center justify-between gap-4 text-sm"><label className="flex items-center gap-2 text-ink/60"><input type="checkbox" className="size-4 accent-coral" /> Remember me</label><a href={`mailto:${company.supportEmail}?subject=Password%20reset`} className="font-bold text-coral hover:text-ink">Forgot password?</a></div>
                       <button className="btn group w-full justify-center gap-3 bg-ink text-cream hover:bg-coral hover:text-ink" type="submit"><span>LOGIN</span><KeyRound size={17} className="transition-transform group-hover:rotate-12" /></button>
                     </form>
                     <p className="mt-7 text-center text-sm text-ink/50">Don&apos;t have an account? <a href="/signup" className="font-bold text-coral hover:text-ink">Sign Up</a></p>

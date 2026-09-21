@@ -1,3 +1,4 @@
+import { company } from '../company';
 import BrandLogo from './BrandLogo';
 
 export default function Footer() {
@@ -6,7 +7,7 @@ export default function Footer() {
       <div className="shell">
         <div className="grid gap-12 md:grid-cols-[1.35fr_.8fr_.9fr_1.2fr] md:gap-10">
           <div>
-            <a href="/" className="inline-flex" aria-label="TrainWellAcademy.net homepage"><BrandLogo /></a>
+            <a href="/" className="inline-flex" aria-label={`${company.siteName} homepage`}><BrandLogo /></a>
             <p className="mt-6 max-w-xs leading-7 text-ink/60">Build a stronger routine with clear guidance, flexible programs, and coaching that keeps you moving forward.</p>
             <div className="mt-6 flex items-center gap-2" aria-label="Accepted payment methods">
               <img className="h-10 w-16 rounded-md border border-ink/10 bg-white object-contain p-2 shadow-sm" src="/assets/visa.webp" alt="Visa payment" />
@@ -25,15 +26,13 @@ export default function Footer() {
           <div className="text-sm leading-7">
             <b className="mb-2 block text-xs tracking-[.14em] text-coral">COMPANY DETAILS</b>
             <address className="not-italic text-ink/65">
-              <strong className="text-ink">DEKO 2026 LTD</strong><br />
-              Town of SANDANSKI, 12 &quot;NADEJDA&quot; STREET<br />
-              BLAGOEVGRAD REGION, 2800<br />
-              REPUBLIC OF BULGARIA<br />
-              <span className="font-bold text-ink">TAX NUMBER BG 208889087</span>
+              <strong className="text-ink">{company.legalName}</strong><br />
+              {company.addressLines.map(line => <span key={line}>{line}<br /></span>)}
+              <span className="font-bold text-ink">TAX NUMBER {company.taxNumber}</span>
             </address>
           </div>
         </div>
-        <div className="mt-12 border-t border-ink/10 pt-5 text-xs text-ink/45"><p>© 2026 TrainWellAcademy.net. All rights reserved.</p></div>
+        <div className="mt-12 border-t border-ink/10 pt-5 text-xs text-ink/45"><p>© {company.year} {company.siteName}. All rights reserved.</p></div>
       </div>
     </footer>
   );

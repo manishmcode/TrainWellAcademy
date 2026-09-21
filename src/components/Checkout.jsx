@@ -1,5 +1,6 @@
 import { ArrowRight, Check, LockKeyhole, ShieldCheck } from 'lucide-react';
 import { useState } from 'react';
+import { company } from '../company';
 import Footer from './Footer';
 import Header from './Header';
 
@@ -24,7 +25,7 @@ export default function Checkout() {
               <div className="mx-auto grid size-16 place-items-center bg-coral text-ink"><Check size={30} /></div>
               <span className="eyebrow mt-8 block text-coral">PAYMENT RECEIVED</span>
               <h1 className="display mt-5 text-5xl md:text-7xl">YOU’RE READY<br /><em className="not-italic text-coral">TO MOVE.</em></h1>
-              <p className="mx-auto mt-6 max-w-md leading-7 text-ink/60">Your TrainWellAcademy.net membership is being prepared. We’ll send your access details to your email shortly.</p>
+              <p className="mx-auto mt-6 max-w-md leading-7 text-ink/60">Your {company.siteName} membership is being prepared. We’ll send your access details to your email shortly.</p>
               <a href="/#courses" className="btn mt-8 gap-3">OPEN THE LIBRARY <ArrowRight size={17} /></a>
             </div>
           ) : (
@@ -62,7 +63,7 @@ export default function Checkout() {
 
                 <fieldset className="mt-9 border-t border-ink/15 pt-7">
                   <legend className="text-lg font-bold">SEPA Direct Debit Information</legend>
-                  <div className="mt-5 border border-ink/15 bg-cream p-4 text-xs leading-5 text-ink/60"><p><strong className="text-ink">SEPA Direct Debit</strong></p><p className="mt-2">By confirming this payment, you authorize TrainWellAcademy.net to send instructions to your bank to debit your account. You are entitled to a refund under the terms of your agreement with your bank.</p><label className="mt-4 block text-[10px] font-bold tracking-[.16em] text-ink/55">IBAN *<input className={fieldClass} name="iban" placeholder="IBAN" pattern="[A-Za-z0-9 ]{10,}" required /></label></div>
+                  <div className="mt-5 border border-ink/15 bg-cream p-4 text-xs leading-5 text-ink/60"><p><strong className="text-ink">SEPA Direct Debit</strong></p><p className="mt-2">By confirming this payment, you authorize {company.siteName} to send instructions to your bank to debit your account. You are entitled to a refund under the terms of your agreement with your bank.</p><label className="mt-4 block text-[10px] font-bold tracking-[.16em] text-ink/55">IBAN *<input className={fieldClass} name="iban" placeholder="IBAN" pattern="[A-Za-z0-9 ]{10,}" required /></label></div>
                 </fieldset>
 
                 <div className="mt-7 flex items-start gap-3 border border-ink/15 bg-cream p-4 text-xs leading-5 text-ink/60"><ShieldCheck className="mt-0.5 shrink-0 text-coral" size={17} /><p>Payment information is encrypted and secure. No card or bank details are stored on this device.</p></div>
