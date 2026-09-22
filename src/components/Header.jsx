@@ -5,22 +5,30 @@ import {
   getSelectedTranslationLanguage,
   switchGoogleTranslateLanguage,
 } from '../services/googleTranslate';
-import { getToken } from '../services/auth';
+import { getCachedLibraryAccess, getToken } from '../services/auth';
 import BrandLogo from './BrandLogo';
 
 export default function Header() {
   const [open, setOpen] = useState(false);
   const [language, setLanguage] = useState(getSelectedTranslationLanguage);
   const [isAuthenticated, setIsAuthenticated] = useState(() => Boolean(getToken()));
+  const [hasLibraryAccess, setHasLibraryAccess] = useState(() => getCachedLibraryAccess() === true);
 
   useEffect(() => {
     setLanguage(getSelectedTranslationLanguage());
     const updateAuthState = () => setIsAuthenticated(Boolean(getToken()));
+    const updateLibraryAccess = () => setHasLibraryAccess(getCachedLibraryAccess() === true);
     window.addEventListener('authchange', updateAuthState);
     window.addEventListener('storage', updateAuthState);
+    window.addEventListener('authchange', updateLibraryAccess);
+    window.addEventListener('storage', updateLibraryAccess);
+    window.addEventListener('libraryaccesschange', updateLibraryAccess);
     return () => {
       window.removeEventListener('authchange', updateAuthState);
       window.removeEventListener('storage', updateAuthState);
+      window.removeEventListener('authchange', updateLibraryAccess);
+      window.removeEventListener('storage', updateLibraryAccess);
+      window.removeEventListener('libraryaccesschange', updateLibraryAccess);
     };
   }, []);
 
@@ -42,7 +50,7 @@ export default function Header() {
           className={`${open ? 'flex' : 'hidden'} absolute inset-x-0 top-[78px] flex-col gap-6 border-b border-ink/15 bg-cream p-8 md:static md:ml-auto md:flex md:flex-row md:items-center md:border-0 md:bg-transparent md:p-0`}
         >
           <a href="/" onClick={() => setOpen(false)}>Home</a>
-          <a href="/pricing" onClick={() => setOpen(false)}>Pricing</a>
+          {!hasLibraryAccess && <a href="/pricing" onClick={() => setOpen(false)}>Pricing</a>}
           <a href="/library" onClick={() => setOpen(false)}>Library</a>
           <a href="/unsubscribe" onClick={() => setOpen(false)}>Unsubscribe</a>
         </nav>

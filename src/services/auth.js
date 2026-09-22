@@ -40,7 +40,10 @@ export function getCachedLibraryAccess() {
   const value = sessionStorage.getItem(LIBRARY_ACCESS);
   return value === null ? null : value === 'true';
 }
-export function saveLibraryAccess(hasAccess) { sessionStorage.setItem(LIBRARY_ACCESS, String(Boolean(hasAccess))); }
+export function saveLibraryAccess(hasAccess) {
+  sessionStorage.setItem(LIBRARY_ACCESS, String(Boolean(hasAccess)));
+  window.dispatchEvent(new Event('libraryaccesschange'));
+}
 export function saveAuthSession({ token, user }) {
   if (!token || !user) throw new Error('The server returned an invalid session.');
   localStorage.setItem(TOKEN, token);
