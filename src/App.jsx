@@ -1,6 +1,5 @@
 import { useEffect, lazy, Suspense } from 'react';
-import { getToken, getUser } from './services/auth';
-import { fetchDashboard, hasActivePlan } from './services/account';
+import { getToken, getUser, hasActiveSubscription } from './services/auth';
 import Page, { Notice } from './components/Page';
 import AdminLiveClasses from './components/AdminLiveClasses';
 import{useState}from'react';import{company}from'./company';import Header from'./components/Header';import Hero from'./components/Hero';import Courses from'./components/Courses';import Coaching from'./components/Coaching';import About from'./components/About';import Footer from'./components/Footer';import VideoModal from'./components/VideoModal';import Unsubscribe from'./components/Unsubscribe';import Pricing from'./components/Pricing';import Login from'./components/Login';import Signup from'./components/Signup';import Imprint from'./components/Imprint';import Library from'./components/Library';import Terms from'./components/Terms';import Privacy from'./components/Privacy';import Profile from'./components/Profile';
@@ -12,12 +11,8 @@ export default function App({ pathname }) {
  const path = (pathname || window.location.pathname).replace(/\/+$/, '') || '/';
  const [token, setToken] = useState(null);
  const [sessionReady, setSessionReady] = useState(false);
- const [account, setAccount] = useState(null);
- const [error, setError] = useState('');
- const [attempt, setAttempt] = useState(0);
  const admin = !!token && getUser()?.is_admin === true;
  useEffect(() => { const changed = () => { setToken(getToken()); setSessionReady(true); }; changed(); window.addEventListener('authchange', changed); window.addEventListener('storage', changed); window.addEventListener('focus', changed); const timer = setInterval(changed, 30000); return () => { window.removeEventListener('authchange', changed); window.removeEventListener('storage', changed); window.removeEventListener('focus', changed); clearInterval(timer); }; }, []);
- useEffect(() => { let active = true; if (token && !admin && path === '/library') { setError(''); fetchDashboard().then(data => { if(active) setAccount(data); }).catch(e => { if(active) setError(e.message); }); } return () => { active = false; }; }, [token, admin, path, attempt]);
  if (!sessionReady && ['/login','/signup','/checkout','/library','/profile','/live-classes'].includes(path)) return <Page title="Loading"><Notice>Checking your session...</Notice></Page>;
  if (admin && ['/login','/signup','/pricing','/checkout','/library'].includes(path)) return <Redirect to="/live-classes/"/>;
  if (token && ['/login','/signup'].includes(path)) return <Redirect to="/library/"/>;
@@ -25,9 +20,7 @@ export default function App({ pathname }) {
  if (path === '/live-classes' && !admin) return <Redirect to="/library/"/>;
  if (path === '/library') {
   if (!token) return <Redirect to="/pricing/"/>;
-  if (error) return <Page title="Library"><Notice error>{error}</Notice><button className="btn" onClick={() => setAttempt(attempt+1)}>Retry</button></Page>;
-  if (!account) return <Page title="Library"><Notice>Checking your membership...</Notice></Page>;
-  if (!hasActivePlan(account)) return <Redirect to="/pricing/"/>;
+  if (!hasActiveSubscription(getUser())) return <Redirect to="/pricing/"/>;
  }
  const routes = {'/':Home, '/pricing':Pricing, '/login':Login, '/signup':Signup, '/profile':Profile, '/checkout':Checkout, '/library':Library, '/live-classes':AdminLiveClasses, '/unsubscribe':Unsubscribe, '/imprint':Imprint, '/privacy':Privacy, '/privacy-policy':Privacy, '/terms':Terms, '/terms-conditions':Terms};
  const Component = routes[path];

@@ -22,6 +22,17 @@ export function getToken() {
 export function getUser() {
   try { return JSON.parse(localStorage.getItem(USER)) || null; } catch { return null; }
 }
+export function hasActiveSubscription(user) {
+  let metadata = user?.user_meta;
+  if (typeof metadata === 'string') {
+    try { metadata = JSON.parse(metadata); } catch { metadata = null; }
+  }
+
+  const status = String(metadata?.subscription_status ?? user?.subscription_status ?? '').trim().toLowerCase();
+  const planId = metadata?.plan_id ?? user?.plan_id;
+
+  return status === 'active' && Number(planId) > 0;
+}
 export function saveUser(user) { localStorage.setItem(USER, JSON.stringify(user)); }
 export function saveAuthSession({ token, user }) {
   if (!token || !user) throw new Error('The server returned an invalid session.');
