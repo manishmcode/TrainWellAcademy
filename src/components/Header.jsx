@@ -5,34 +5,19 @@ import {
   getSelectedTranslationLanguage,
   switchGoogleTranslateLanguage,
 } from '../services/googleTranslate';
-import { getToken } from '../services/auth';
 import BrandLogo from './BrandLogo';
 
 export default function Header() {
   const [open, setOpen] = useState(false);
   const [language, setLanguage] = useState(getSelectedTranslationLanguage);
-  const [loggedIn, setLoggedIn] = useState(() => Boolean(getToken()));
 
   useEffect(() => {
     setLanguage(getSelectedTranslationLanguage());
   }, []);
 
-  useEffect(() => {
-    const syncAuth = () => setLoggedIn(Boolean(getToken()));
-
-    syncAuth();
-    window.addEventListener('authchange', syncAuth);
-    window.addEventListener('storage', syncAuth);
-
-    return () => {
-      window.removeEventListener('authchange', syncAuth);
-      window.removeEventListener('storage', syncAuth);
-    };
-  }, []);
-
   async function handleLanguageChange(event) {
-    const selectedLanguage = event.target.value;
-    const activeLanguage = await switchGoogleTranslateLanguage(selectedLanguage);
+      const activeLanguage = await switchGoogleTranslateLanguage(selectedLanguage);
+      const selectedLanguage = event.target.value;
     setLanguage(activeLanguage);
   }
 
@@ -70,17 +55,15 @@ export default function Header() {
           </select>
         </label>
 
-        {loggedIn ? (
-          <a
-            href="/profile"
-            className="ml-3 grid size-10 shrink-0 place-items-center rounded-full border border-ink/15 text-ink transition hover:border-coral hover:bg-coral hover:text-ink"
-            aria-label="Open profile"
-          >
-            <UserRound size={19} />
-          </a>
-        ) : (
-          <a href="/login" className="btn ml-3 hidden md:inline-flex">LOGIN</a>
-        )}
+        <a
+          href="/profile"
+          className="ml-3 grid size-10 shrink-0 place-items-center rounded-full border border-ink/15 text-ink transition hover:border-coral hover:bg-coral hover:text-ink"
+          aria-label="Open profile"
+        >
+          <UserRound size={19} />
+        </a>
+
+        <a href="/login" className="btn ml-3 hidden md:inline-flex">LOGIN</a>
 
         <button
           onClick={() => setOpen(!open)}
