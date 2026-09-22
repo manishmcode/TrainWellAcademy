@@ -5,14 +5,23 @@ import {
   getSelectedTranslationLanguage,
   switchGoogleTranslateLanguage,
 } from '../services/googleTranslate';
+import { getToken } from '../services/auth';
 import BrandLogo from './BrandLogo';
 
 export default function Header() {
   const [open, setOpen] = useState(false);
   const [language, setLanguage] = useState(getSelectedTranslationLanguage);
+  const [isAuthenticated, setIsAuthenticated] = useState(() => Boolean(getToken()));
 
   useEffect(() => {
     setLanguage(getSelectedTranslationLanguage());
+    const updateAuthState = () => setIsAuthenticated(Boolean(getToken()));
+    window.addEventListener('authchange', updateAuthState);
+    window.addEventListener('storage', updateAuthState);
+    return () => {
+      window.removeEventListener('authchange', updateAuthState);
+      window.removeEventListener('storage', updateAuthState);
+    };
   }, []);
 
   async function handleLanguageChange(event) {
@@ -63,7 +72,7 @@ export default function Header() {
           <UserRound size={19} />
         </a>
 
-        <a href="/login" className="btn ml-3 hidden md:inline-flex">LOGIN</a>
+        {!isAuthenticated && <a href="/login" className="btn ml-3 hidden md:inline-flex">LOGIN</a>}
 
         <button
           onClick={() => setOpen(!open)}
