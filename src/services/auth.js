@@ -1,10 +1,12 @@
 const TOKEN = 'trainwellacademy_token';
 const USER = 'trainwellacademy_user';
+const LIBRARY_ACCESS = 'trainwellacademy_library_access';
 export function clearAuthSession() {
   localStorage.removeItem(TOKEN);
   localStorage.removeItem(USER);
   localStorage.removeItem('trainwellacademy_has_active_plan');
   sessionStorage.removeItem('trainwellacademy_pending_payment');
+  sessionStorage.removeItem(LIBRARY_ACCESS);
   document.cookie = `${TOKEN}=; path=/; max-age=0; SameSite=Lax`;
   window.dispatchEvent(new Event('authchange'));
 }
@@ -34,10 +36,16 @@ export function hasActiveSubscription(user) {
   return status === 'active' && Number(planId) > 0;
 }
 export function saveUser(user) { localStorage.setItem(USER, JSON.stringify(user)); }
+export function getCachedLibraryAccess() {
+  const value = sessionStorage.getItem(LIBRARY_ACCESS);
+  return value === null ? null : value === 'true';
+}
+export function saveLibraryAccess(hasAccess) { sessionStorage.setItem(LIBRARY_ACCESS, String(Boolean(hasAccess))); }
 export function saveAuthSession({ token, user }) {
   if (!token || !user) throw new Error('The server returned an invalid session.');
   localStorage.setItem(TOKEN, token);
   saveUser(user);
+  sessionStorage.removeItem(LIBRARY_ACCESS);
   document.cookie = `${TOKEN}=${encodeURIComponent(token)}; path=/; max-age=2592000; SameSite=Lax${location.protocol === 'https:' ? '; Secure' : ''}`;
   window.dispatchEvent(new Event('authchange'));
 }

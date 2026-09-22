@@ -1,8 +1,9 @@
-import { useEffect, lazy, Suspense } from 'react';
-import { getToken, getUser, hasActiveSubscription } from './services/auth';
+import { useEffect, lazy, Suspense, useState } from 'react';
+import { getCachedLibraryAccess, getToken, getUser, saveLibraryAccess, saveUser } from './services/auth';
+import { fetchDashboard, hasActivePlan } from './services/account';
 import Page, { Notice } from './components/Page';
 import AdminLiveClasses from './components/AdminLiveClasses';
-import{useState}from'react';import{company}from'./company';import Header from'./components/Header';import Hero from'./components/Hero';import Courses from'./components/Courses';import Coaching from'./components/Coaching';import About from'./components/About';import Footer from'./components/Footer';import VideoModal from'./components/VideoModal';import Unsubscribe from'./components/Unsubscribe';import Pricing from'./components/Pricing';import Login from'./components/Login';import Signup from'./components/Signup';import Imprint from'./components/Imprint';import Library from'./components/Library';import Terms from'./components/Terms';import Privacy from'./components/Privacy';import Profile from'./components/Profile';
+import{company}from'./company';import Header from'./components/Header';import Hero from'./components/Hero';import Courses from'./components/Courses';import Coaching from'./components/Coaching';import About from'./components/About';import Footer from'./components/Footer';import VideoModal from'./components/VideoModal';import Unsubscribe from'./components/Unsubscribe';import Pricing from'./components/Pricing';import Login from'./components/Login';import Signup from'./components/Signup';import Imprint from'./components/Imprint';import Library from'./components/Library';import Terms from'./components/Terms';import Privacy from'./components/Privacy';import Profile from'./components/Profile';
 const Checkout = lazy(() => import('./components/Checkout'));
 function Home(){const[video,setVideo]=useState(false),[sent,setSent]=useState(false);function submit(e){e.preventDefault();window.location.assign('/signup?email='+encodeURIComponent(new FormData(e.currentTarget).get('email')))}return <><Header/><main><Hero play={()=>setVideo(true)}/><Courses play={()=>setVideo(true)}/><Coaching play={()=>setVideo(true)}/><About/><section id="join" className="bg-coral px-4 py-16 md:px-[6vw]"><div className="mx-auto grid max-w-[1180px] gap-8 lg:grid-cols-2 lg:items-center"><div><span className="eyebrow">START YOUR FITNESS JOURNEY</span><h2 className="display mt-5 text-5xl md:text-5xl">READY TO BUILD A <em className="text-white not-italic">HEALTHIER YOU? </em></h2></div><form onSubmit={submit}><label htmlFor="email" className="mb-3 block font-bold">Get course access and updates</label><div className="flex flex-col gap-2 sm:flex-row"><input id="email" name="email" type="email" autoComplete="email" placeholder="Enter your email address" required className="min-h-12 flex-1 px-4"/><button className="bg-ink px-5 py-4 font-bold text-cream">GET STARTED ↗</button></div></form></div></section></main><Footer/><VideoModal open={video} onClose={()=>setVideo(false)}/>{sent&&<div role="status" className="fixed bottom-5 right-5 z-[90] bg-ink px-5 py-4 font-bold text-cream">WELCOME TO {company.siteName.toUpperCase()} — CHECK YOUR INBOX.</div>}</>}
 
@@ -11,8 +12,36 @@ export default function App({ pathname }) {
  const path = (pathname || window.location.pathname).replace(/\/+$/, '') || '/';
  const [token, setToken] = useState(null);
  const [sessionReady, setSessionReady] = useState(false);
+ const [libraryAccess, setLibraryAccess] = useState(false);
+ const [libraryAccessReady, setLibraryAccessReady] = useState(false);
  const admin = !!token && getUser()?.is_admin === true;
- useEffect(() => { const changed = () => { setToken(getToken()); setSessionReady(true); }; changed(); window.addEventListener('authchange', changed); window.addEventListener('storage', changed); window.addEventListener('focus', changed); const timer = setInterval(changed, 30000); return () => { window.removeEventListener('authchange', changed); window.removeEventListener('storage', changed); window.removeEventListener('focus', changed); clearInterval(timer); }; }, []);
+ useEffect(() => {
+  let active = true;
+  const changed = async () => {
+   const nextToken = getToken();
+   if (!active) return;
+   setToken(nextToken); setSessionReady(true);
+   if (!nextToken) { setLibraryAccess(false); setLibraryAccessReady(true); return; }
+   const cachedAccess = getCachedLibraryAccess();
+   if (cachedAccess !== null) { setLibraryAccess(cachedAccess); setLibraryAccessReady(true); return; }
+   setLibraryAccessReady(false);
+   try {
+    const dashboard = await fetchDashboard();
+    if (!active) return;
+    const hasAccess = hasActivePlan(dashboard);
+    saveUser({ ...getUser(), ...dashboard });
+    saveLibraryAccess(hasAccess);
+    setLibraryAccess(hasAccess);
+   } catch {
+    if (!active) return;
+    setLibraryAccess(false);
+   } finally {
+    if (active) setLibraryAccessReady(true);
+   }
+  };
+  changed(); window.addEventListener('authchange', changed); window.addEventListener('storage', changed);
+  return () => { active = false; window.removeEventListener('authchange', changed); window.removeEventListener('storage', changed); };
+ }, []);
  if (!sessionReady && ['/login','/signup','/checkout','/library','/profile','/live-classes'].includes(path)) return <Page title="Loading"><Notice>Checking your session...</Notice></Page>;
  if (admin && ['/login','/signup','/pricing','/checkout','/library'].includes(path)) return <Redirect to="/live-classes/"/>;
  if (token && ['/login','/signup'].includes(path)) return <Redirect to="/library/"/>;
@@ -20,7 +49,8 @@ export default function App({ pathname }) {
  if (path === '/live-classes' && !admin) return <Redirect to="/library/"/>;
  if (path === '/library') {
   if (!token) return <Redirect to="/pricing/"/>;
-  if (!hasActiveSubscription(getUser())) return <Redirect to="/pricing/"/>;
+  if (!libraryAccessReady) return <Page title="Loading"><Notice>Checking your membership...</Notice></Page>;
+  if (!libraryAccess) return <Redirect to="/pricing/"/>;
  }
  const routes = {'/':Home, '/pricing':Pricing, '/login':Login, '/signup':Signup, '/profile':Profile, '/checkout':Checkout, '/library':Library, '/live-classes':AdminLiveClasses, '/unsubscribe':Unsubscribe, '/imprint':Imprint, '/privacy':Privacy, '/privacy-policy':Privacy, '/terms':Terms, '/terms-conditions':Terms};
  const Component = routes[path];
