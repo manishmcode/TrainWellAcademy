@@ -1,5 +1,9 @@
 import { Check, CreditCard, FileText, KeyRound, LogOut, Save, UserRound } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { fetchDashboard } from '../services/account';
+import { post, request } from '../services/api';
+import { clearAuthSession, getUser, saveUser } from '../services/auth';
+import { formatMoney } from '../config/money';
 import Footer from './Footer';
 import Header from './Header';
 
@@ -20,18 +24,41 @@ function PanelHeader({ eyebrow, title, number }) {
 export default function Profile() {
   const [activeTab, setActiveTab] = useState('account');
   const [saved, setSaved] = useState(false);
-  const [form, setForm] = useState({ firstName: 'sampleuser', lastName: '', displayName: 'sampleuser', email: 'sampleuser@gmail.com' });
+  const [form, setForm] = useState({ firstName: '', lastName: '', displayName: '', email: '' });
   const [passwords, setPasswords] = useState({ current: '', next: '', confirm: '' });
   const [passwordStatus, setPasswordStatus] = useState('');
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  async function load() {
+    setLoading(true); setError('');
+    try {
+      const account = await fetchDashboard(); setData(account);
+      setForm({ firstName: account.firstname || '', lastName: account.lastname || '', displayName: account.user_meta?.display_name || getUser()?.name || '', email: account.email || '' });
+    } catch (error) { setError(error.message); }
+    finally { setLoading(false); }
+  }
+  useEffect(() => { load(); }, []);
+  const displayName = data?.user_meta?.display_name || getUser()?.name || 'My account';
+  const date = value => value && Number.isFinite(new Date(value).getTime()) ? new Date(value).toLocaleDateString() : '—';
 
   function updateField(event) {
     setSaved(false);
     setForm((current) => ({ ...current, [event.target.name]: event.target.value }));
   }
 
-  function saveProfile(event) {
+  async function saveProfile(event) {
     event.preventDefault();
-    setSaved(true);
+    if (busy || loading || !data) return;
+    setBusy(true); setError(''); setSaved(false);
+    try {
+      await request('/user/profile', { method: 'PUT', body: { firstname: form.firstName.trim(), lastname: form.lastName.trim(), display_name: form.displayName.trim() } });
+      saveUser({ ...getUser(), name: `${form.firstName.trim()} ${form.lastName.trim()}`, user_meta: { ...getUser()?.user_meta, display_name: form.displayName.trim() } });
+      setData(current => ({ ...current, firstname: form.firstName.trim(), lastname: form.lastName.trim(), user_meta: { ...current.user_meta, display_name: form.displayName.trim() } }));
+      setSaved(true);
+    } catch (error) { setError(error.message); }
+    finally { setBusy(false); }
   }
 
   function updatePassword(event) {
@@ -39,14 +66,20 @@ export default function Profile() {
     setPasswords((current) => ({ ...current, [event.target.name]: event.target.value }));
   }
 
-  function savePassword(event) {
+  async function savePassword(event) {
     event.preventDefault();
+    if (busy || loading || !data) return;
     if (passwords.next !== passwords.confirm) {
       setPasswordStatus('Passwords do not match.');
       return;
     }
-    setPasswords({ current: '', next: '', confirm: '' });
-    setPasswordStatus('Password updated successfully.');
+    setBusy(true); setError('');
+    try {
+      await post('/auth/change-password', { old_password: passwords.current, new_password: passwords.next });
+      setPasswords({ current: '', next: '', confirm: '' });
+      setPasswordStatus('Password updated successfully.');
+    } catch (error) { setError(error.message); }
+    finally { setBusy(false); }
   }
 
   return (
@@ -56,9 +89,9 @@ export default function Profile() {
         <div className="mx-auto grid w-full max-w-[1216px] items-start gap-7 lg:grid-cols-[270px_minmax(0,1fr)]">
           <aside className="overflow-hidden border border-ink/15 bg-white shadow-[0_14px_34px_rgba(23,27,25,0.06)]">
             <div className="flex min-h-[198px] flex-col items-center justify-center bg-ink px-5 py-7 text-center">
-              <div className="grid size-[72px] place-items-center bg-coral text-2xl font-bold text-ink shadow-[0_12px_28px_rgba(240,100,59,0.2)]">S</div>
-              <h1 className="mt-5 text-lg font-bold text-cream">sampleuser</h1>
-              <p className="mt-1 text-xs text-cream/55">sampleuser@gmail.com</p>
+              <div className="grid size-[72px] place-items-center bg-coral text-2xl font-bold text-ink shadow-[0_12px_28px_rgba(240,100,59,0.2)]">{displayName.charAt(0).toUpperCase()}</div>
+              <h1 className="mt-5 text-lg font-bold text-cream">{displayName}</h1>
+              <p className="mt-1 text-xs text-cream/55">{data?.email || getUser()?.email}</p>
             </div>
 
             <div className="p-3.5">
@@ -70,25 +103,27 @@ export default function Profile() {
                   </button>
                 ))}
               </nav>
-              <a href="/login" className="mt-4 flex min-h-12 w-full items-center justify-center gap-2 border border-ink/15 text-[13px] font-bold text-ink/55 transition hover:border-coral hover:text-coral"><LogOut size={17} /> Log Out</a>
+              <a href="/login" onClick={clearAuthSession} className="mt-4 flex min-h-12 w-full items-center justify-center gap-2 border border-ink/15 text-[13px] font-bold text-ink/55 transition hover:border-coral hover:text-coral"><LogOut size={17} /> Log Out</a>
             </div>
           </aside>
 
           <section className="min-h-[590px] border border-ink/15 bg-white px-5 py-9 shadow-[0_14px_34px_rgba(23,27,25,0.05)] sm:px-8 lg:px-12 lg:py-12">
+            {loading && <p role="status">Loading account...</p>}
+            {error && <p role="alert" className="mb-5 text-sm text-coral">{error} {!data && <button onClick={load}>Retry</button>}</p>}
             {activeTab === 'account' ? (
               <form onSubmit={saveProfile}>
                 <PanelHeader eyebrow="PROFILE INFORMATION" title="Account Details" number="03" />
 
                 <div className="mt-7 grid gap-5 sm:grid-cols-2">
-                  <label className={labelClass}>FIRST NAME<input className={inputClass} name="firstName" value={form.firstName} onChange={updateField} autoComplete="given-name" placeholder="First name" /></label>
-                  <label className={labelClass}>LAST NAME<input className={inputClass} name="lastName" value={form.lastName} onChange={updateField} autoComplete="family-name" placeholder="Last name" /></label>
+                  <label className={labelClass}>FIRST NAME<input className={inputClass} name="firstName" value={form.firstName} onChange={updateField} autoComplete="given-name" placeholder="First name" required /></label>
+                  <label className={labelClass}>LAST NAME<input className={inputClass} name="lastName" value={form.lastName} onChange={updateField} autoComplete="family-name" placeholder="Last name" required /></label>
                   <label className={`${labelClass} sm:col-span-2`}>DISPLAY NAME<input className={inputClass} name="displayName" value={form.displayName} onChange={updateField} autoComplete="nickname" placeholder="Display name" required /></label>
-                  <label className={`${labelClass} sm:col-span-2`}>EMAIL / USERNAME<input className={inputClass} name="email" type="email" value={form.email} onChange={updateField} autoComplete="email" placeholder="you@example.com" required /></label>
+                  <label className={`${labelClass} sm:col-span-2`}>EMAIL / USERNAME<input className={inputClass} name="email" type="email" value={form.email} readOnly autoComplete="email" placeholder="you@example.com" required /></label>
                 </div>
 
                 <div className="mt-6 flex flex-col-reverse items-stretch gap-3 sm:flex-row sm:items-center sm:justify-end">
                   {saved && <span role="status" className="flex items-center justify-center gap-1.5 text-xs font-bold text-ink/60 sm:mr-2"><Check size={14} className="text-coral" /> Changes saved successfully.</span>}
-                  <button type="submit" className="inline-flex min-h-12 items-center justify-center gap-2 bg-ink px-6 text-xs font-bold text-cream shadow-[0_12px_26px_rgba(23,27,25,0.18)] transition hover:bg-coral hover:text-ink"><Save size={15} /> Save Changes</button>
+                  <button type="submit" disabled={busy || loading || !data} className="inline-flex min-h-12 items-center justify-center gap-2 bg-ink px-6 text-xs font-bold text-cream shadow-[0_12px_26px_rgba(23,27,25,0.18)] transition hover:bg-coral hover:text-ink"><Save size={15} /> {busy ? 'Saving...' : 'Save Changes'}</button>
                 </div>
               </form>
             ) : activeTab === 'payments' ? (
@@ -97,25 +132,26 @@ export default function Profile() {
                 <div className="mt-7 overflow-x-auto">
                   <table className="w-full min-w-[650px] border-collapse text-left text-xs">
                     <thead className="text-[10px] uppercase tracking-[.14em] text-ink/50"><tr className="border-b border-ink/15"><th className="pb-5 font-bold">Payments</th><th className="pb-5 font-bold">Date</th><th className="pb-5 font-bold">Status</th><th className="pb-5 text-right font-bold">Total</th></tr></thead>
-                    <tbody><tr className="border-b border-ink/15"><td className="py-6 font-bold">manual_3_2_1785240644102</td><td className="py-6 font-bold">28/07/2026</td><td className="py-6"><span className="inline-flex items-center gap-2 bg-coral/15 px-3 py-2 text-[10px] font-bold tracking-[.1em] text-coral"><i className="size-1.5 bg-coral not-italic" />PAID</span></td><td className="py-6 text-right font-bold">EUR 99</td></tr></tbody>
+                    <tbody>{(data?.payments || []).map((payment, index) => <tr key={payment.payment_id || index} className="border-b border-ink/15"><td className="py-6 font-bold">{payment.payment_id}</td><td className="py-6 font-bold">{date(payment.date)}</td><td className="py-6"><span className="inline-flex items-center gap-2 bg-coral/15 px-3 py-2 text-[10px] font-bold tracking-[.1em] text-coral"><i className="size-1.5 bg-coral not-italic" />{String(payment.status).toUpperCase()}</span></td><td className="py-6 text-right font-bold">{formatMoney(payment.price, payment.currency || 'EUR')}</td></tr>)}{!loading && !data?.payments?.length && <tr><td colSpan={4} className="py-6">No payments yet.</td></tr>}</tbody>
                   </table>
                 </div>
               </div>
             ) : activeTab === 'subscriptions' ? (
               <div>
                 <PanelHeader eyebrow="CURRENT PLAN" title="My subscriptions" number="02" />
-                <div className="mt-8 grid gap-8">
-                  <div><span className="text-[10px] font-bold text-coral">01</span><h3 className="mt-2 text-sm font-bold">Premium</h3></div>
+                {(data?.subscriptions || []).map((subscription, index) => <div key={subscription.id || index} className="mt-8 grid gap-8">
+                  <div><span className="text-[10px] font-bold text-coral">{String(index + 1).padStart(2, '0')}</span><h3 className="mt-2 text-sm font-bold">{subscription.plan_name}</h3></div>
                   <dl className="text-xs">
-                    <div className="flex items-center justify-between gap-5 border-b border-ink/15 pb-4"><dt className="text-ink/55">Auto-Renewal</dt><dd><span className="inline-flex items-center gap-2 bg-coral/15 px-3 py-2 text-[10px] font-bold tracking-[.08em] text-coral"><i className="size-1.5 bg-coral not-italic" />ACTIVE</span></dd></div>
-                    <div className="flex justify-between gap-5 border-b border-ink/15 py-4"><dt className="text-ink/55">Start Date</dt><dd className="font-bold">28/08/2026</dd></div>
-                    <div className="flex justify-between gap-5 border-b border-ink/15 py-4"><dt className="text-ink/55">Next Billing Date</dt><dd className="font-bold">28/09/2026</dd></div>
-                    <div className="flex justify-between gap-5 border-b border-ink/15 py-4"><dt className="text-ink/55">Payment Type</dt><dd className="text-right font-bold">Monthly Recurring</dd></div>
-                    <div className="flex justify-between gap-5 border-b border-ink/15 py-4"><dt className="text-ink/55">Payment</dt><dd className="font-bold">Paid</dd></div>
-                    <div className="flex justify-between gap-5 border-b border-ink/15 py-4"><dt className="text-ink/55">Reference</dt><dd className="break-all text-right font-bold">manual_3_2_1785240644102</dd></div>
-                    <div className="flex justify-between gap-5 pt-4"><dt className="font-bold">Recurring Amount</dt><dd className="font-bold">EUR 99/month</dd></div>
+                    <div className="flex items-center justify-between gap-5 border-b border-ink/15 pb-4"><dt className="text-ink/55">Auto-Renewal</dt><dd><span className="inline-flex items-center gap-2 bg-coral/15 px-3 py-2 text-[10px] font-bold tracking-[.08em] text-coral"><i className="size-1.5 bg-coral not-italic" />{String(subscription.cancelled_at ? 'Cancelled' : subscription.status).toUpperCase()}</span></dd></div>
+                    <div className="flex justify-between gap-5 border-b border-ink/15 py-4"><dt className="text-ink/55">Start Date</dt><dd className="font-bold">{date(subscription.starts_at)}</dd></div>
+                    <div className="flex justify-between gap-5 border-b border-ink/15 py-4"><dt className="text-ink/55">Next Billing Date</dt><dd className="font-bold">{subscription.cancelled_at ? '—' : date(subscription.ends_at)}</dd></div>
+                    <div className="flex justify-between gap-5 border-b border-ink/15 py-4"><dt className="text-ink/55">Payment Type</dt><dd className="text-right font-bold">{subscription.billing_frequency || '—'}</dd></div>
+                    <div className="flex justify-between gap-5 border-b border-ink/15 py-4"><dt className="text-ink/55">Payment</dt><dd className="font-bold">{subscription.payment_status}</dd></div>
+                    <div className="flex justify-between gap-5 border-b border-ink/15 py-4"><dt className="text-ink/55">Reference</dt><dd className="break-all text-right font-bold">{subscription.payment_reference}</dd></div>
+                    <div className="flex justify-between gap-5 pt-4"><dt className="font-bold">Recurring Amount</dt><dd className="font-bold">{formatMoney(subscription.price, subscription.currency || 'EUR')}{subscription.billing_frequency ? ` / ${subscription.billing_frequency}` : ''}</dd></div>
                   </dl>
-                </div>
+                </div>)}
+                {!loading && !data?.subscriptions?.length && <p className="mt-8 text-sm">No subscriptions yet.</p>}
               </div>
             ) : (
               <form onSubmit={savePassword}>
@@ -127,7 +163,7 @@ export default function Profile() {
                 </div>
                 <div className="mt-6 flex flex-col-reverse items-stretch gap-3 sm:flex-row sm:items-center sm:justify-end">
                   {passwordStatus && <span role="status" className={`text-center text-xs font-bold sm:mr-2 ${passwordStatus.startsWith('Password updated') ? 'text-ink/60' : 'text-coral'}`}>{passwordStatus}</span>}
-                  <button type="submit" className="inline-flex min-h-12 items-center justify-center gap-2 bg-ink px-6 text-xs font-bold text-cream shadow-[0_12px_26px_rgba(23,27,25,0.18)] transition hover:bg-coral hover:text-ink"><KeyRound size={15} /> Update Password</button>
+                  <button type="submit" disabled={busy || loading || !data} className="inline-flex min-h-12 items-center justify-center gap-2 bg-ink px-6 text-xs font-bold text-cream shadow-[0_12px_26px_rgba(23,27,25,0.18)] transition hover:bg-coral hover:text-ink"><KeyRound size={15} /> {busy ? 'Saving...' : 'Update Password'}</button>
                 </div>
               </form>
             )}

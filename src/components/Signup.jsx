@@ -1,3 +1,5 @@
+import { post } from '../services/api';
+import { saveAuthSession } from '../services/auth';
 import { ArrowRight, Check, KeyRound, UserPlus } from 'lucide-react';
 import { useState } from 'react';
 import { company } from '../company';
@@ -9,9 +11,19 @@ const inputClass = 'mt-2 block h-12 w-full border-b-2 border-ink/20 bg-transpare
 export default function Signup() {
   const [created, setCreated] = useState(false);
 
-  function submit(event) {
-    event.preventDefault();
-    setCreated(true);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  const [visible, setVisible] = useState(false);
+  async function submit(event) {
+    event.preventDefault(); if (busy) return;
+    const v = Object.fromEntries(new FormData(event.currentTarget));
+    setError(''); setBusy(true);
+    try {
+      if (v.password !== v.confirmPassword) throw new Error('Passwords do not match.');
+      const result = await post('/auth/signup', { name: v.firstName.trim()+' '+v.lastName.trim(), email: v.email.trim(), password: v.password }, { auth: false });
+      saveAuthSession(result);
+      window.location.assign(result.user.is_admin ? '/live-classes/' : '/library/');
+    } catch (e) { setError(e.message); } finally { setBusy(false); }
   }
 
   return (
@@ -48,15 +60,15 @@ export default function Signup() {
                       <h2 className="mt-8 text-4xl font-bold md:text-5xl">Create Your Account</h2>
                       <p className="mt-3 text-sm leading-6 text-ink/55">Sign up to start learning with us.</p>
                     </div>
-                    <form onSubmit={submit} className="space-y-6">
+                    <form onSubmit={submit} className="space-y-6">{error && <p role="alert" className="text-red-700">{error}</p>}<fieldset disabled={busy} className="space-y-6">
                       <div className="grid gap-6 sm:grid-cols-2">
                         <label className="block text-[11px] font-bold tracking-[.16em] text-ink/55">FIRST NAME <span className="text-coral">*</span><input className={inputClass} name="firstName" autoComplete="given-name" placeholder="First name" required /></label>
                         <label className="block text-[11px] font-bold tracking-[.16em] text-ink/55">LAST NAME <span className="text-coral">*</span><input className={inputClass} name="lastName" autoComplete="family-name" placeholder="Last name" required /></label>
                       </div>
                       <label className="block text-[11px] font-bold tracking-[.16em] text-ink/55">EMAIL ADDRESS <span className="text-coral">*</span><input className={inputClass} type="email" name="email" autoComplete="email" placeholder="you@example.com" required /></label>
-                      <label className="block text-[11px] font-bold tracking-[.16em] text-ink/55">PASSWORD <span className="text-coral">*</span><input className={inputClass} type="password" name="password" autoComplete="new-password" placeholder="Create a password" minLength="8" required /></label>
-                      <button className="btn group w-full justify-center gap-3 bg-ink text-cream hover:bg-coral hover:text-ink" type="submit"><span>SIGN UP</span><KeyRound size={17} className="transition-transform group-hover:rotate-12" /></button>
-                    </form>
+                      <label className="block text-[11px] font-bold tracking-[.16em] text-ink/55">PASSWORD <span className="text-coral">*</span><input className={inputClass} type={visible ? "text" : "password"} name="password" autoComplete="new-password" placeholder="Create a password" minLength="8" required /></label>
+                      <label className="block">Confirm password<input className={inputClass} type={visible ? "text" : "password"} name="confirmPassword" autoComplete="new-password" required /></label><button type="button" onClick={() => setVisible(!visible)} className="text-sm font-bold">{visible ? "Hide passwords" : "Show passwords"}</button><button className="btn group w-full justify-center gap-3 bg-ink text-cream hover:bg-coral hover:text-ink" type="submit"><span>SIGN UP</span><KeyRound size={17} className="transition-transform group-hover:rotate-12" /></button>
+                    {busy && <p role="status">Please wait...</p>}</fieldset></form>
                     <p className="mt-7 text-center text-sm text-ink/50">Already have an account? <a href="/login" className="font-bold text-coral hover:text-ink">Login</a></p>
                   </>
                 )}

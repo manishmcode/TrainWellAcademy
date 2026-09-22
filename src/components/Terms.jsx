@@ -2,7 +2,7 @@ import Header from './Header';
 import Footer from './Footer';
 import { company, companyAddress, supportMailto } from '../company';
 
-const sections = [
+const sections = () => [
   ['1. Service', <>We provide online courses and educational materials through our platform. The Service is provided 'as is' and 'as available' without any warranties of any kind. We reserve the right to modify, suspend, or discontinue the Service at any time without notice.</>],
   ['2. User Agreement', <>By accessing or using the Service, you agree to be bound by these Terms and our Privacy Policy. If you disagree with any part of the terms, then you may not access the Service. You must provide accurate and complete information when creating an account.</>],
   ['3. Your License', <>We grant you a limited, non-exclusive, non-transferable, and revocable license to access and use the Service for your personal, non-commercial educational purposes. You may not copy, modify, distribute, sell, or lease any part of our Services or included software.</>],
@@ -48,7 +48,7 @@ export default function Terms() {
               </div>
             </div>
             <div className="divide-y divide-ink/15">
-              {sections.map(([heading, content]) => <section key={heading} className="py-8 first:pt-8"><h3 className="text-lg font-bold">{heading}</h3><div className="mt-4 leading-7 text-ink/65">{content}</div></section>)}
+              {sections().map(([heading, content]) => <section key={heading} className="py-8 first:pt-8"><h3 className="text-lg font-bold">{heading}</h3><div className="mt-4 leading-7 text-ink/65">{content}</div></section>)}
             </div>
           </div>
         </section>

@@ -10,3 +10,5 @@
 @media (max-width:1180px){.library-module-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:860px){.library-browser-layout{display:block}.library-browser-layout>aside{position:static;margin-bottom:1.75rem}.library-module-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:560px){.library-module-grid{grid-template-columns:minmax(0,1fr)}}
+
+@layer components{.form-input{@apply mt-2 block min-h-12 w-full border border-ink/20 bg-cream px-3 text-ink outline-none focus:border-coral}button:disabled{@apply cursor-wait opacity-50}}

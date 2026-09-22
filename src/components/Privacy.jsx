@@ -2,7 +2,7 @@ import Header from './Header';
 import Footer from './Footer';
 import { company, companyAddress, supportMailto } from '../company';
 
-const sections = [
+const sections = () => [
   ['1. Consent to Privacy Policy', <>By accessing and using our Site and Services, you acknowledge that you have read and agree to this Privacy Policy.</>],
   ['2. Information Collection and Personally Identifiable Information', <><p>We collect registration data, including email address, password, first name, last name, phone number, and payment details.</p><p className="mt-5">We collect usage data, including information about your browser, network, or device.</p><p className="mt-5">We collect marketing data related to communication and other interaction campaigns.</p><p className="mt-5">Legal bases include contract performance, legitimate interests, and compliance with legal obligations such as accounting and tax requirements.</p><p className="mt-5">You may request access to, correction of, or deletion of your data, restrict processing, or object to processing, especially marketing. We will honor such requests unless an overriding legal obligation applies.</p><p className="mt-5">We ensure processing through GDPR compliant data processors, such as hosting providers and payment processors. We may also be legally required to disclose information to authorities.</p></>],
   ['3. Information Use', <>We use information for processing payment transactions, customizing services, ads, and recommendations, contacting you and responding to requests, conducting research and improving services, preventing fraud, and ensuring security.</>],
@@ -28,7 +28,7 @@ export default function Privacy() {
               <p className="mt-5 text-sm text-ink/50">Last updated: September, 2026</p>
               <div className="mt-6 border-l-4 border-coral bg-cream p-5 text-sm leading-7 text-ink/65"><strong className="block text-ink">Controller details</strong><span className="block">{company.legalName}</span>{company.addressLines.map(line => <span className="block" key={line}>{line}</span>)}<a href={supportMailto} className="mt-2 inline-block font-bold text-coral">{company.supportEmail}</a></div>
             </div>
-            <div className="divide-y divide-ink/15">{sections.map(([heading, content]) => <section key={heading} className="py-8"><h3 className="text-lg font-bold">{heading}</h3><div className="mt-4 leading-7 text-ink/65">{content}</div></section>)}</div>
+            <div className="divide-y divide-ink/15">{sections().map(([heading, content]) => <section key={heading} className="py-8"><h3 className="text-lg font-bold">{heading}</h3><div className="mt-4 leading-7 text-ink/65">{content}</div></section>)}</div>
           </div>
         </section>
       </main>

@@ -1,3 +1,5 @@
+import { post } from '../services/api';
+import { saveAuthSession } from '../services/auth';
 import { ArrowRight, Check, KeyRound, LogIn } from 'lucide-react';
 import { useState } from 'react';
 import { company } from '../company';
@@ -9,9 +11,18 @@ const inputClass = 'mt-2 block h-12 w-full border-b-2 border-ink/20 bg-transpare
 export default function Login() {
   const [loggedIn, setLoggedIn] = useState(false);
 
-  function submit(event) {
-    event.preventDefault();
-    setLoggedIn(true);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  const [visible, setVisible] = useState(false);
+  async function submit(event) {
+    event.preventDefault(); if (busy) return;
+    const v = Object.fromEntries(new FormData(event.currentTarget));
+    setError(''); setBusy(true);
+    try {
+      const result = await post('/auth/login', { email: v.email.trim(), password: v.password }, { auth: false });
+      saveAuthSession(result);
+      window.location.assign(result.user.is_admin ? '/live-classes/' : '/library/');
+    } catch (e) { setError(e.message); } finally { setBusy(false); }
   }
 
   return (
@@ -49,12 +60,12 @@ export default function Login() {
                       <h2 className="mt-4 text-4xl font-bold md:text-5xl">Login to Your Account</h2>
                       <p className="mt-3 text-sm leading-6 text-ink/55">Welcome back! Please login to continue.</p>
                     </div>
-                    <form onSubmit={submit} className="space-y-6">
+                    <form onSubmit={submit} className="space-y-6">{error && <p role="alert" className="text-red-700">{error}</p>}<fieldset disabled={busy} className="space-y-6">
                       <label className="block text-[11px] font-bold tracking-[.16em] text-ink/55">EMAIL ADDRESS <span className="text-coral">*</span><input className={inputClass} type="email" name="email" autoComplete="email" placeholder="you@example.com" required /></label>
-                      <label className="block text-[11px] font-bold tracking-[.16em] text-ink/55">PASSWORD <span className="text-coral">*</span><input className={inputClass} type="password" name="password" autoComplete="current-password" placeholder="Enter your password" required /></label>
+                      <label className="block text-[11px] font-bold tracking-[.16em] text-ink/55">PASSWORD <span className="text-coral">*</span><input className={inputClass} type={visible ? "text" : "password"} name="password" autoComplete="current-password" placeholder="Enter your password" required /></label>
                       <div className="flex items-center justify-between gap-4 text-sm"><label className="flex items-center gap-2 text-ink/60"><input type="checkbox" className="size-4 accent-coral" /> Remember me</label><a href={`mailto:${company.supportEmail}?subject=Password%20reset`} className="font-bold text-coral hover:text-ink">Forgot password?</a></div>
-                      <button className="btn group w-full justify-center gap-3 bg-ink text-cream hover:bg-coral hover:text-ink" type="submit"><span>LOGIN</span><KeyRound size={17} className="transition-transform group-hover:rotate-12" /></button>
-                    </form>
+                      <button type="button" onClick={() => setVisible(!visible)} className="text-sm font-bold">{visible ? "Hide passwords" : "Show passwords"}</button><button className="btn group w-full justify-center gap-3 bg-ink text-cream hover:bg-coral hover:text-ink" type="submit"><span>LOGIN</span><KeyRound size={17} className="transition-transform group-hover:rotate-12" /></button>
+                    {busy && <p role="status">Please wait...</p>}</fieldset></form>
                     <p className="mt-7 text-center text-sm text-ink/50">Don&apos;t have an account? <a href="/signup" className="font-bold text-coral hover:text-ink">Sign Up</a></p>
                   </>
                 )}
