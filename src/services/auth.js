@@ -37,10 +37,12 @@ export function hasActiveSubscription(user) {
 }
 export function saveUser(user) { localStorage.setItem(USER, JSON.stringify(user)); }
 export function getCachedLibraryAccess() {
+  if (typeof window === 'undefined') return null;
   const value = sessionStorage.getItem(LIBRARY_ACCESS);
   return value === null ? null : value === 'true';
 }
 export function saveLibraryAccess(hasAccess) {
+  if (typeof window === 'undefined') return;
   sessionStorage.setItem(LIBRARY_ACCESS, String(Boolean(hasAccess)));
   window.dispatchEvent(new Event('libraryaccesschange'));
 }
