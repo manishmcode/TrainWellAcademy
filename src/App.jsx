@@ -8,6 +8,9 @@ const Checkout = lazy(() => import('./components/Checkout'));
 function Home(){const[video,setVideo]=useState(false);return <><Header/><main><Hero play={()=>setVideo(true)}/><Courses play={()=>setVideo(true)}/><Coaching play={()=>setVideo(true)}/><About/><section id="join" className="bg-coral px-4 py-16 md:px-[6vw]"><div className="mx-auto grid max-w-[1180px] gap-8 lg:grid-cols-2 lg:items-center"><div><span className="eyebrow">START YOUR FITNESS JOURNEY</span><h2 className="display mt-5 text-5xl md:text-5xl">READY TO BUILD A <em className="text-white not-italic">HEALTHIER YOU? </em></h2></div><a href="/signup" className="w-fit bg-ink px-5 py-4 font-bold text-cream">GET STARTED ↗</a></div></section></main><Footer/><VideoModal open={video} onClose={()=>setVideo(false)}/></>}
 
 function Redirect({ to }) { useEffect(() => { window.location.replace(to); }, [to]); return <Page title="Redirecting"><Notice>Redirecting...</Notice></Page>; }
+function NotFound() {
+ return <div className="flex min-h-screen flex-col bg-cream text-ink"><Header /><main className="grid flex-1 place-items-center px-6 py-16 text-center"><section><span className="font-display text-[clamp(5rem,12vw,9rem)] leading-none text-coral">404</span><p className="eyebrow mt-3 text-coral">Page not found</p><h1 className="mt-5 font-display text-4xl uppercase md:text-6xl">This page does not exist.</h1><p className="mx-auto mt-5 max-w-md text-sm leading-6 text-ink/60">The link may be incorrect or the page may have moved.</p><a href="/" className="btn mt-8 bg-ink text-cream hover:bg-coral">BACK HOME</a></section></main><Footer /></div>;
+}
 export default function App({ pathname }) {
  const path = (pathname || window.location.pathname).replace(/\/+$/, '') || '/';
  const [token, setToken] = useState(null);
@@ -54,5 +57,5 @@ export default function App({ pathname }) {
  }
  const routes = {'/':Home, '/pricing':Pricing, '/login':Login, '/signup':Signup, '/profile':Profile, '/checkout':Checkout, '/library':Library, '/live-classes':AdminLiveClasses, '/unsubscribe':Unsubscribe, '/imprint':Imprint, '/privacy':Privacy, '/privacy-policy':Privacy, '/terms':Terms, '/terms-conditions':Terms};
  const Component = routes[path];
- return Component ? <Suspense fallback={<Page title="Loading"><Notice>Loading page...</Notice></Page>}><Component/></Suspense> : <Page title="Page not found"><p>This page does not exist.</p><a className="btn mt-6" href="/">Back home</a></Page>;
+ return Component ? <Suspense fallback={<Page title="Loading"><Notice>Loading page...</Notice></Page>}><Component/></Suspense> : <NotFound />;
 }

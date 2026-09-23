@@ -1,0 +1,18 @@
+RewriteEngine On
+
+# Use the non-www HTTPS domain as the single canonical site address.
+RewriteCond %{HTTP_HOST} ^www\.trainwellacademy\.net$ [NC]
+RewriteRule ^ https://trainwellacademy.net%{REQUEST_URI} [R=301,L]
+
+# Never rewrite API requests or real files/directories.
+RewriteRule ^trainwellacademy-api(?:/|$) - [L]
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Client routes that are valid pages in the application.
+RewriteRule ^(pricing|login|signup|profile|checkout|library|live-classes|unsubscribe|imprint|privacy|privacy-policy|terms|terms-conditions)/?$ /index.html [L]
+
+# Unknown paths load the React 404 screen with a real HTTP 404 status.
+ErrorDocument 404 /index.html
+RewriteRule ^ - [R=404,L]
