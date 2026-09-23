@@ -1,5 +1,5 @@
 import { fetchPlans } from '../services/api';
-import { ArrowRight, Check, Crown, Dumbbell, LoaderCircle, Sparkles } from 'lucide-react';
+import { ArrowRight, Check, Crown, Dumbbell, LoaderCircle, Sparkles, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import Header from './Header';
 import Footer from './Footer';
@@ -61,7 +61,7 @@ export default function Pricing() {
               const presentation = planPresentation[key];
               const Icon = presentation?.icon ?? [Dumbbell, Crown, Sparkles][index % 3];
               const featured = key === 'premium';
-              const includedFeatures = (plan.features || []).filter(feature => feature.is_included);
+              const features = Array.from(new Map((plan.features || []).map(feature => [feature.name, feature])).values());
               return (
                 <article key={plan.id} className={`relative flex flex-col border p-6 shadow-[0_16px_35px_rgba(23,27,25,0.08)] transition md:p-8 ${featured ? 'border-coral bg-coral text-ink lg:-mt-5 lg:mb-5' : 'border-ink/10 bg-white'}`}>
                   {featured && <span className="absolute right-5 top-5 bg-ink px-3 py-1 text-[10px] font-bold tracking-[.12em] text-cream">MOST POPULAR</span>}
@@ -70,7 +70,7 @@ export default function Pricing() {
                   <h2 className="mt-3 font-display text-4xl uppercase">{plan.name}</h2>
                   <div className="mt-8 flex items-end gap-2 border-b border-current/15 pb-7"><span className="font-display text-6xl">{formatPrice(plan.price, plan.currency)}</span><span className="pb-2 text-xs opacity-60">/ month</span></div>
                   <ul className="my-7 flex-1 space-y-4 text-sm">
-                    {includedFeatures.map((feature) => <li key={feature.name} className="flex gap-3"><Check className="shrink-0 text-coral" size={17} />{feature.name}</li>)}
+                    {features.map((feature) => <li key={feature.name} className={`flex gap-3 ${feature.is_included ? '' : 'opacity-45'}`}>{feature.is_included ? <Check className={`shrink-0 ${featured ? 'text-ink' : 'text-coral'}`} size={17} /> : <X className="shrink-0 text-ink" size={17} />}{feature.name}</li>)}
                   </ul>
                   <button onClick={() => { sessionStorage.setItem("trainwellacademy_checkout_plan_id", String(plan.id)); window.location.assign("/checkout/"); }} className={`btn group w-full justify-between ${featured ? 'border border-ink bg-ink hover:bg-transparent hover:text-ink' : 'border border-ink/25 bg-transparent text-ink hover:bg-coral hover:text-ink'}`}>
                     <span>CHOOSE {plan.name.toUpperCase()}</span><ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />

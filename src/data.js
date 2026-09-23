@@ -1,4 +1,17 @@
-export const courses=[
-{id:'01',type:'STRENGTH',duration:'6 WEEKS',level:'BEGINNER — ADVANCED',title:'Build Muscle & Get Stronger',text:'Progressive strength training for every level.',image:'https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?fm=webp&fit=crop&w=1600&q=94',alt:'Man completing a focused strength training exercise'},
-{id:'02',type:'MOBILITY',duration:'4 WEEKS',level:'ALL LEVELS',title:'Improve Flexibility & Reduce Stress',text:'Move better, breathe deeper and feel balanced.',image:'https://images.unsplash.com/photo-1599447421416-3414500d18a5?fm=webp&fit=crop&w=1600&q=94',alt:'Woman practicing yoga and guided mobility training'},
-{id:'03',type:'HIIT',duration:'4 WEEKS',level:'INTERMEDIATE',title:'Burn Calories & Boost Energy',text:'Fast-paced sessions that keep you moving.',image:'https://images.unsplash.com/photo-1517963879433-6ad2b056d712?fm=webp&fit=crop&w=1600&q=94',alt:'Athlete performing a high-intensity interval workout'}];
+export const courses = [
+  {
+    id: '01', type: 'HOME WORKOUT', duration: '10 LESSONS', level: 'ALL LEVELS',
+    title: 'Ultimate Home Workout Plan', text: 'Structured workouts that can be completed without going to a gym.',
+    image: '/assets/home/course-strength.png', alt: 'Structured home workout training',
+  },
+  {
+    id: '02', type: 'PILATES', duration: '11 LESSONS', level: 'ALL LEVELS',
+    title: 'Pilates Training', text: 'Low-impact Pilates for flexibility, strength and mobility.',
+    image: '/assets/home/course-mobility.png', alt: 'People practising low-impact Pilates mobility training',
+  },
+  {
+    id: '03', type: 'ABS & CORE', duration: '10 LESSONS', level: 'ALL LEVELS',
+    title: 'Gymless Ab Toner', text: 'Bodyweight exercises focused on core strength.',
+    image: '/assets/home/course-hiit.png', alt: 'Woman completing a bodyweight core exercise',
+  },
+];

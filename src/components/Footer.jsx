@@ -27,8 +27,8 @@ export default function Footer() {
             <b className="mb-2 block text-xs tracking-[.14em] text-coral">COMPANY DETAILS</b>
             <address className="not-italic text-ink/65">
               <strong className="text-ink">{company.legalName}</strong><br />
-              {company.addressLines.map(line => <span key={line}>{line}<br /></span>)}
-              <span className="font-bold text-ink">TAX NUMBER {company.taxNumber}</span>
+              {company.addressLines.map(line => <span key={line}>{line.replace(' REGION,', ',')}<br /></span>)}
+              <a href={`mailto:${company.supportEmail}`} className="transition hover:text-coral">Email: {company.supportEmail}</a>
             </address>
           </div>
         </div>

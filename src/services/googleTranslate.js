@@ -3,6 +3,7 @@ const TRANSLATE_COOKIE = 'googtrans';
 const COMBO_SELECTOR = '.goog-te-combo';
 const TRANSLATE_ELEMENT_ID = 'google_translate_element';
 const TRANSLATE_SCRIPT_ID = 'google-translate-script';
+const TRANSLATION_STORAGE_KEY = 'trainwell_selected_language';
 
 let translateLoader;
 let bannerObserver;
@@ -115,6 +116,11 @@ function waitForTranslateCombo(attempts = 20, delay = 100) {
 }
 
 export function getSelectedTranslationLanguage() {
+  if (typeof window !== 'undefined') {
+    const savedLanguage = window.localStorage.getItem(TRANSLATION_STORAGE_KEY);
+    if (TRANSLATION_LANGUAGES.includes(savedLanguage)) return savedLanguage;
+  }
+
   const value = getCookie(TRANSLATE_COOKIE);
   const match = value.match(/^\/([^/]+)\/([^/]+)$/);
   const target = match?.[2];
@@ -135,6 +141,7 @@ export function clearGoogleTranslateCookie() {
 
 export async function switchGoogleTranslateLanguage(language) {
   const targetLanguage = TRANSLATION_LANGUAGES.includes(language) ? language : SOURCE_LANGUAGE;
+  window.localStorage.setItem(TRANSLATION_STORAGE_KEY, targetLanguage);
 
   try {
     await (window.loadGoogleTranslate?.() ?? loadGoogleTranslate());

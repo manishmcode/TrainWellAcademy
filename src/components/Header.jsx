@@ -15,7 +15,11 @@ export default function Header() {
   const [hasLibraryAccess, setHasLibraryAccess] = useState(() => getCachedLibraryAccess() === true);
 
   useEffect(() => {
-    setLanguage(getSelectedTranslationLanguage());
+    const savedLanguage = getSelectedTranslationLanguage();
+    setLanguage(savedLanguage);
+    if (savedLanguage !== 'en') {
+      switchGoogleTranslateLanguage(savedLanguage).catch(() => {});
+    }
     const updateAuthState = () => setIsAuthenticated(Boolean(getToken()));
     const updateLibraryAccess = () => setHasLibraryAccess(getCachedLibraryAccess() === true);
     window.addEventListener('authchange', updateAuthState);
@@ -33,8 +37,8 @@ export default function Header() {
   }, []);
 
   async function handleLanguageChange(event) {
-      const activeLanguage = await switchGoogleTranslateLanguage(selectedLanguage);
-      const selectedLanguage = event.target.value;
+    const selectedLanguage = event.target.value;
+    const activeLanguage = await switchGoogleTranslateLanguage(selectedLanguage);
     setLanguage(activeLanguage);
   }
 
@@ -72,13 +76,15 @@ export default function Header() {
           </select>
         </label>
 
-        <a
-          href="/profile"
-          className="ml-3 grid size-10 shrink-0 place-items-center rounded-full border border-ink/15 text-ink transition hover:border-coral hover:bg-coral hover:text-ink"
-          aria-label="Open profile"
-        >
-          <UserRound size={19} />
-        </a>
+        {isAuthenticated && (
+          <a
+            href="/profile"
+            className="ml-3 grid size-10 shrink-0 place-items-center rounded-full border border-ink/15 text-ink transition hover:border-coral hover:bg-coral hover:text-ink"
+            aria-label="Open profile"
+          >
+            <UserRound size={19} />
+          </a>
+        )}
 
         {!isAuthenticated && <a href="/login" className="btn ml-3 hidden md:inline-flex">LOGIN</a>}
 

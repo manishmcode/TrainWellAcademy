@@ -46,6 +46,9 @@ export function saveLibraryAccess(hasAccess) {
   sessionStorage.setItem(LIBRARY_ACCESS, String(Boolean(hasAccess)));
   window.dispatchEvent(new Event('libraryaccesschange'));
 }
+export function getCourseAccessPath() {
+  return getToken() && getCachedLibraryAccess() === true ? '/library/' : '/pricing/';
+}
 export function saveAuthSession({ token, user }) {
   if (!token || !user) throw new Error('The server returned an invalid session.');
   localStorage.setItem(TOKEN, token);
