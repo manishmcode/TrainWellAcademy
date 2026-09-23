@@ -1,0 +1,8 @@
+Robots.txt:
+
+User-agent: *
+Allow: /
+
+Sitemap: https://trainwellacademy.net/sitemap.xml
+
+

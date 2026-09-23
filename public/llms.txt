@@ -1,0 +1,14 @@
+# TrainWellAcademy
+
+> TrainWellAcademy is an online fitness platform offering 74 on-demand lessons across Pilates, bodyweight training, home workouts, nutrition, kettlebells, mobility, and core training. Users can train at their own pace with flexible access to fitness content designed for building healthier routines at home.
+
+## Public pages
+
+- [Home](https://trainwellacademy.net/): Overview of TrainWellAcademy, including on-demand fitness lessons, home workouts, Pilates, bodyweight training, nutrition, kettlebells, and core training
+- [Pricing](https://trainwellacademy.net/pricing/): Membership plans, subscription options, fitness content access, and available plans
+- [Terms & Conditions](https://trainwellacademy.net/terms/): Terms and conditions governing the use of TrainWellAcademy services
+- [Privacy Policy](https://trainwellacademy.net/privacy/): Privacy policy and information about data collection, use, and user privacy
+- [Imprint](https://trainwellacademy.net/imprint/): Legal and company information about TrainWellAcademy and DEKO 2026 LTD
+- [Unsubscribe](https://trainwellacademy.net/unsubscribe/): Subscription cancellation page for submitting a request to cancel a TrainWellAcademy fitness subscription 
+
+
