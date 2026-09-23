@@ -61,7 +61,8 @@ export default function Pricing() {
               const presentation = planPresentation[key];
               const Icon = presentation?.icon ?? [Dumbbell, Crown, Sparkles][index % 3];
               const featured = key === 'premium';
-              const features = Array.from(new Map((plan.features || []).map(feature => [feature.name, feature])).values());
+              const features = Array.from(new Map((plan.features || []).map(feature => [feature.name, feature])).values())
+                .sort((a, b) => Number(Boolean(b.is_included)) - Number(Boolean(a.is_included)));
               return (
                 <article key={plan.id} className={`relative flex flex-col border p-6 shadow-[0_16px_35px_rgba(23,27,25,0.08)] transition md:p-8 ${featured ? 'border-coral bg-coral text-ink lg:-mt-5 lg:mb-5' : 'border-ink/10 bg-white'}`}>
                   {featured && <span className="absolute right-5 top-5 bg-ink px-3 py-1 text-[10px] font-bold tracking-[.12em] text-cream">MOST POPULAR</span>}
