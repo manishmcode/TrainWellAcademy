@@ -20,10 +20,11 @@ async function sendRequest(path, { method, body, auth, signal, envelope }, token
     if (error.name === 'AbortError') throw error;
     throw new Error('Unable to reach the server. Please try again.');
   }
-  if (response.status === 401 && token && path !== '/auth/change-password') clearAuthSession();
   let result;
   try { result = await response.json(); } catch { throw new Error('The server returned an invalid response.'); }
   if (!result || typeof result !== 'object') throw new Error('The server returned an invalid response.');
+  const userWasNotFound = response.status === 404 && /user\s+not\s+found/i.test(String(result.message || ''));
+  if (token && (response.status === 401 || userWasNotFound) && path !== '/auth/change-password') clearAuthSession();
   if (!response.ok || result.success === false) {
     const error = new Error(result.message || `Request failed (${response.status}).`);
     error.status = response.status;

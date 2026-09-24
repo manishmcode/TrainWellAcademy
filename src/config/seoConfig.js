@@ -40,6 +40,27 @@ function schemaFor(route, metadata, site) {
   const canonical = metadata.canonical;
   const websiteId = `${base}/#website`, serviceId = `${base}/#fitness-service`;
   const legalPage = ['/terms', '/privacy', '/imprint'].includes(route);
+  const breadcrumb = breadcrumbSchema(route, canonical, base);
+
+  // Informational, legal, and account pages need only one WebPage entity.
+  // Keep their organization and website data nested beneath that page so
+  // validators do not report an unrelated Service item for these routes.
+  if (!['/', '/pricing'].includes(route)) {
+    const organization = organizationSchema(site);
+    return {
+      '@context': 'https://schema.org',
+      '@type': pageTypes[route] || 'WebPage',
+      '@id': `${canonical}#webpage`,
+      url: canonical,
+      name: metadata.title,
+      description: metadata.description,
+      isPartOf: { '@type': 'WebSite', '@id': websiteId, url: `${base}/`, name: site.company.brandName, publisher: { '@id': organization['@id'] } },
+      ...(legalPage ? { about: { '@id': organization['@id'] } } : {}),
+      publisher: organization,
+      ...(breadcrumb ? { breadcrumb } : {}),
+    };
+  }
+
   const graph = [
     organizationSchema(site),
     { '@type': 'WebSite', '@id': websiteId, url: `${base}/`, name: site.company.brandName, publisher: { '@id': `${base}/#organization` } },
@@ -47,7 +68,6 @@ function schemaFor(route, metadata, site) {
     { '@type': pageTypes[route] || 'WebPage', '@id': `${canonical}#webpage`, url: canonical, name: metadata.title, description: metadata.description, isPartOf: { '@id': websiteId }, about: { '@id': legalPage ? `${base}/#organization` : serviceId }, publisher: { '@id': `${base}/#organization` }, ...(route === '/pricing' ? { mainEntity: { '@id': `${canonical}#membership-plans` } } : {}), ...(route !== '/' ? { breadcrumb: { '@id': `${canonical}#breadcrumb` } } : {}) },
   ];
   if (route === '/pricing') graph.push(pricingCatalog(canonical, base));
-  const breadcrumb = breadcrumbSchema(route, canonical, base);
   if (breadcrumb) graph.push(breadcrumb);
   return { '@context': 'https://schema.org', '@graph': graph };
 }

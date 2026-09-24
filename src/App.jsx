@@ -1,5 +1,5 @@
 import { useEffect, lazy, Suspense, useState } from 'react';
-import { getCachedLibraryAccess, getToken, getUser, saveLibraryAccess, saveUser } from './services/auth';
+import { clearAuthSession, getCachedLibraryAccess, getToken, getTokenExpiry, getUser, saveLibraryAccess, saveUser } from './services/auth';
 import { fetchDashboard, hasActivePlan } from './services/account';
 import Page, { Notice } from './components/Page';
 import AdminLiveClasses from './components/AdminLiveClasses';
@@ -19,12 +19,15 @@ export default function App({ pathname }) {
  const [libraryAccessReady, setLibraryAccessReady] = useState(false);
  const admin = !!token && getUser()?.is_admin === true;
  useEffect(() => {
-  let active = true;
+  let active = true, expiryTimer;
   const changed = async () => {
+   window.clearTimeout(expiryTimer);
    const nextToken = getToken();
    if (!active) return;
    setToken(nextToken); setSessionReady(true);
    if (!nextToken) { setLibraryAccess(false); setLibraryAccessReady(true); return; }
+   const expiresAt = getTokenExpiry();
+   if (expiresAt) expiryTimer = window.setTimeout(clearAuthSession, Math.max(0, expiresAt - Date.now()));
    const cachedAccess = getCachedLibraryAccess();
    if (cachedAccess !== null) { setLibraryAccess(cachedAccess); setLibraryAccessReady(true); return; }
    setLibraryAccessReady(false);
@@ -43,7 +46,7 @@ export default function App({ pathname }) {
    }
   };
   changed(); window.addEventListener('authchange', changed); window.addEventListener('storage', changed);
-  return () => { active = false; window.removeEventListener('authchange', changed); window.removeEventListener('storage', changed); };
+  return () => { active = false; window.clearTimeout(expiryTimer); window.removeEventListener('authchange', changed); window.removeEventListener('storage', changed); };
  }, []);
  if (!sessionReady && ['/login','/signup','/checkout','/library','/profile','/live-classes'].includes(path)) return <Page title="Loading"><Notice>Checking your session...</Notice></Page>;
  if (admin && ['/login','/signup','/pricing','/checkout','/library'].includes(path)) return <Redirect to="/live-classes/"/>;

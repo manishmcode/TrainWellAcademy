@@ -13,13 +13,26 @@ export function clearAuthSession() {
 export function getToken() {
   if (typeof window === 'undefined') return null;
   const token = localStorage.getItem(TOKEN);
-  if (!token) return null;
+  // A user record without its token is not an authenticated session.
+  if (!token) {
+    if (localStorage.getItem(USER)) clearAuthSession();
+    return null;
+  }
   try {
     const part = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
     const payload = JSON.parse(atob(part));
     if (!payload.exp || payload.exp * 1000 <= Date.now()) throw new Error('Expired session');
     return token;
   } catch { clearAuthSession(); return null; }
+}
+export function getTokenExpiry() {
+  const token = getToken();
+  if (!token) return null;
+  try {
+    const part = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+    const payload = JSON.parse(atob(part));
+    return Number.isFinite(payload.exp) ? payload.exp * 1000 : null;
+  } catch { return null; }
 }
 export function getUser() {
   try { return JSON.parse(localStorage.getItem(USER)) || null; } catch { return null; }
