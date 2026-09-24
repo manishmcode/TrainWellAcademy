@@ -58,7 +58,7 @@ export default function Signup() {
                   <>
                     <div className="mb-10 border-b border-ink/15 pb-8">
                       <span className="grid size-12 place-items-center bg-coral/15 text-coral"><UserPlus size={22} /></span>
-                      <h2 className="mt-8 text-4xl font-bold md:text-5xl">Set up your account</h2>
+                      <p className="mt-8 text-4xl font-bold md:text-5xl">Set up your account</p>
                       <p className="mt-3 text-sm leading-6 text-ink/55">Sign up to start learning with us.</p>
                     </div>
                     <form onSubmit={submit} className="space-y-6">{error && <p role="alert" className="text-red-700">{error}</p>}<fieldset disabled={busy} className="space-y-6">
