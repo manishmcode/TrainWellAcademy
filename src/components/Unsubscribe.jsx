@@ -70,7 +70,7 @@ export default function Unsubscribe() {
                   </div>
                 </div>
 
-                <form onSubmit={submit} className="mt-7">{error && <p role="alert" className="text-red-700">{error}</p>}<fieldset disabled={busy}>
+                <form method="post" onSubmit={submit} className="mt-7">{error && <p role="alert" className="text-red-700">{error}</p>}<fieldset disabled={busy}>
                   <div className="grid min-w-0 gap-5 sm:grid-cols-2">
                     <label className="min-w-0 text-[11px] font-bold tracking-[.16em] text-[#8f7769]">FIRST NAME <span className="text-[#c65432]">*</span><input className={inputClass} name="firstName" autoComplete="given-name" placeholder="First name" required /></label>
                     <label className="min-w-0 text-[11px] font-bold tracking-[.16em] text-[#8f7769]">LAST NAME <span className="text-[#c65432]">*</span><input className={inputClass} name="lastName" autoComplete="family-name" placeholder="Last name" required /></label>

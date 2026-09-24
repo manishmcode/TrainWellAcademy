@@ -13,6 +13,6 @@ export default function Coaching() {
       <div className="my-8">{highlights.map((item, index) => <div key={item} className="grid grid-cols-[40px_1fr] border-t border-cream/20 py-4"><b className="text-coral">0{index + 1}</b><h3>{item}</h3></div>)}</div>
       <a className="inline-flex bg-coral px-5 py-4 text-sm font-bold text-cream" href={getCourseAccessPath()}>EXPLORE LIBRARY →</a>
     </div>
-    <div className="relative min-h-[500px]"><img className="object-contain" src="/assets/home/coaching.webp" alt={`Certified ${company.siteName} coach guiding a workout`} width="1100" height="900" loading="lazy" /><a href={getCourseAccessPath()} aria-label="Explore training programs" className="absolute left-1/2 top-1/2 grid size-20 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-coral text-cream"><Play fill="currentColor" /></a></div>
+    <div className="relative min-h-[500px]"><img className="object-contain" src="/assets/home/coaching-960.webp" srcSet="/assets/home/coaching-640.webp 640w, /assets/home/coaching-960.webp 960w" sizes="(min-width: 1024px) 60vw, 100vw" alt={`Certified ${company.siteName} coach guiding a workout`} width="1100" height="900" loading="lazy" /><a href={getCourseAccessPath()} aria-label="Explore training programs" className="absolute left-1/2 top-1/2 grid size-20 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-coral text-cream"><Play fill="currentColor" /></a></div>
   </section>;
 }

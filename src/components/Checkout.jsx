@@ -120,7 +120,7 @@ export default function Checkout() {
             </div>
           ) : (
             <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
-              <form key={account?.email || "guest"} onSubmit={submit} className="border-t-4 border-coral bg-white p-6 shadow-[0_20px_50px_rgba(23,27,25,0.08)] md:p-10">
+              <form key={account?.email || "guest"} method="post" onSubmit={submit} className="border-t-4 border-coral bg-white p-6 shadow-[0_20px_50px_rgba(23,27,25,0.08)] md:p-10">
                 <fieldset disabled={busy || loading || !selected || submitted.current}><div className="flex items-start justify-between gap-6 border-b border-ink/15 pb-7">
                   <div>
                     <span className="eyebrow text-coral">SECURE CHECKOUT</span>

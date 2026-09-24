@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { createRoot, hydrateRoot } from 'react-dom/client';
 import App from './App';
 import { applySiteConfig } from './company';
@@ -10,6 +10,26 @@ import { createPublicConfigClient } from './services/publicConfig.js';
 import SEOHead from './components/SEOHead';
 import { resolveSeo } from './config/seoConfig.js';
 import './index.css';
+
+function ClientApp({ site, seo }) {
+  const [pathname, setPathname] = useState(() => window.location.pathname);
+  const metadata = resolveSeo(pathname, site, seo);
+  const redirect = useCallback((to) => {
+    const destination = new URL(to, window.location.origin);
+    const nextPath = `${destination.pathname}${destination.search}${destination.hash}`;
+    if (`${window.location.pathname}${window.location.search}${window.location.hash}` !== nextPath) window.history.replaceState(null, '', nextPath);
+    setPathname(destination.pathname);
+  }, []);
+
+  useEffect(() => {
+    const syncPathname = () => setPathname(window.location.pathname);
+    window.addEventListener('popstate', syncPathname);
+    return () => window.removeEventListener('popstate', syncPathname);
+  }, []);
+
+  return <SiteConfigProvider config={site}><SEOHead metadata={metadata}/><App pathname={pathname} onRedirect={redirect}/></SiteConfigProvider>;
+}
+
 async function start() {
   let site = siteDefaults, seo = seoDefaults;
   const snapshot = document.getElementById('public-config');
@@ -25,8 +45,7 @@ async function start() {
     if (results.some(result => result.status === 'rejected')) console.warn('Published configuration unavailable; using local defaults.');
   }
   applySiteConfig(site);
-  const metadata = resolveSeo(location.pathname, site, seo);
-  const app = <React.StrictMode><SiteConfigProvider config={site}><SEOHead metadata={metadata}/><App/></SiteConfigProvider></React.StrictMode>;
+  const app = <React.StrictMode><ClientApp site={site} seo={seo}/></React.StrictMode>;
   const root = document.getElementById('root');
   if (root.hasChildNodes()) hydrateRoot(root, app);
   else createRoot(root).render(app);

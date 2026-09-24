@@ -26,9 +26,9 @@ export default function Footer() {
             <a href="/" className="inline-flex" aria-label={`${company.siteName} homepage`}><BrandLogo /></a>
             <p className="mt-6 max-w-xs leading-7 text-ink/60">Build a stronger routine with clear guidance, flexible programs, and coaching that keeps you moving forward.</p>
             <div className="mt-6 flex items-center gap-2" aria-label="Accepted payment methods">
-              <img className="h-10 w-16 rounded-md border border-ink/10 bg-white object-contain p-2 shadow-sm" src="/assets/visa.webp" alt="Visa payment" />
-              <img className="h-10 w-16 rounded-md border border-ink/10 bg-white object-contain p-2 shadow-sm" src="/assets/mastercard.webp" alt="Mastercard payment" />
-              <img className="h-10 w-16 rounded-md border border-ink/10 bg-white object-contain p-2 shadow-sm" src="/assets/sepa.webp" alt="SEPA direct debit" />
+              <img className="h-10 w-16 rounded-md border border-ink/10 bg-white object-contain p-2 shadow-sm" src="/assets/visa-160.webp" width="160" height="65" alt="Visa payment" />
+              <img className="h-10 w-16 rounded-md border border-ink/10 bg-white object-contain p-2 shadow-sm" src="/assets/mastercard-128.webp" width="128" height="95" alt="Mastercard payment" />
+              <img className="h-10 w-16 rounded-md border border-ink/10 bg-white object-contain p-2 shadow-sm" src="/assets/sepa-128.webp" width="128" height="66" alt="SEPA direct debit" />
             </div>
           </div>
           <nav className="flex flex-col gap-3 text-sm" aria-label="Quick links">
