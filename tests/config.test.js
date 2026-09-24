@@ -52,6 +52,15 @@ test('SEO cannot index private routes and safely escapes markup and embedded JSO
   assert.ok(!seoHtml(resolveSeo('/', siteDefaults, seo)).includes('<script>alert'));
   assert.ok(!safeJson({ text: '</script>' }).includes('</script>'));
 });
+
+test('each known route has one connected JSON-LD graph with one organization node', () => {
+  const schema = resolveSeo('/pricing', siteDefaults, seoDefaults).schema;
+  assert.equal(schema['@context'], 'https://schema.org');
+  assert.equal(schema['@graph'].filter(node => node['@type'] === 'Organization').length, 1);
+  assert.equal(schema['@graph'].filter(node => node['@type'] === 'WebPage').length, 1);
+  assert.equal((seoHtml(resolveSeo('/pricing', siteDefaults, seoDefaults)).match(/application\/ld\+json/g) || []).length, 1);
+  assert.equal(resolveSeo('/profile', siteDefaults, seoDefaults).schema['@graph'].some(node => node['@type'] === 'WebPage'), true);
+});
 test('prerender keeps public routes with empty SEO pages and excludes account markup', async () => {
   const files = new Map();
   await prerender({ template: '<html><head><title>old</title></head><body><div id="root"></div></body></html>', snapshot: { site: siteDefaults, seo: seoDefaults }, render: path => `<main>${path}</main>`, write: async (name, content) => files.set(name, content) });
