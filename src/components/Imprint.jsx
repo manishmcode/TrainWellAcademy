@@ -11,6 +11,7 @@ export default function Imprint() {
           <div>
             <span className="eyebrow text-coral">IMPRINT</span>
             <h1 className="display mt-5 text-4xl md:text-5xl">THE DETAILS<br /><em className="not-italic text-coral">BEHIND TRAINWELL.</em></h1>
+            <h2 className="mt-5 text-xl font-bold">Company and legal information</h2>
             <p className="mt-5 max-w-sm leading-7 text-ink/60">Company information and legal details for the {company.siteName} fitness learning platform.</p>
           </div>
           <div className="grid gap-8 text-sm leading-7 text-ink/65 sm:grid-cols-2">

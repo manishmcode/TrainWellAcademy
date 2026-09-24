@@ -48,6 +48,7 @@ export default function Pricing() {
         </section>
 
         <section className="shell -mt-10 md:-mt-16">
+          <h2 className="mb-6 font-display text-3xl uppercase text-ink md:text-4xl">Choose your membership plan</h2>
           {error && <p role="alert" className="bg-white p-4">{error}</p>}
           {loading && <div role="status" className="grid min-h-80 place-items-center bg-white p-8"><div className="flex items-center gap-3 text-sm font-bold text-ink/70"><LoaderCircle className="animate-spin text-coral" size={24} />Loading plans…</div></div>}
           {!loading && !error && !plans.length && <p className="bg-white p-4">No plans are currently available.</p>}
@@ -68,7 +69,7 @@ export default function Pricing() {
                   {featured && <span className="absolute right-5 top-5 bg-ink px-3 py-1 text-[10px] font-bold tracking-[.12em] text-cream">MOST POPULAR</span>}
                   <div className={`grid size-12 place-items-center ${featured ? 'bg-ink text-coral' : 'bg-coral/15 text-coral'}`}><Icon size={22} /></div>
                   {presentation?.label && <span className={`eyebrow mt-8 text-[10px] ${featured ? 'text-ink/60' : 'text-coral'}`}>{presentation.label}</span>}
-                  <h2 className="mt-3 font-display text-4xl uppercase">{plan.name}</h2>
+                  <h3 className="mt-3 font-display text-4xl uppercase">{plan.name}</h3>
                   <div className="mt-8 flex items-end gap-2 border-b border-current/15 pb-7"><span className="font-display text-6xl">{formatPrice(plan.price, plan.currency)}</span><span className="pb-2 text-xs opacity-60">/ month</span></div>
                   <ul className="my-7 flex-1 space-y-4 text-sm">
                     {features.map((feature) => <li key={feature.name} className={`flex gap-3 ${feature.is_included ? '' : 'opacity-45'}`}>{feature.is_included ? <Check className={`shrink-0 ${featured ? 'text-ink' : 'text-coral'}`} size={17} /> : <X className="shrink-0 text-ink" size={17} />}{feature.name}</li>)}

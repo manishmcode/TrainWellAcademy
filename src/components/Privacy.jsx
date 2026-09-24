@@ -24,6 +24,7 @@ export default function Privacy() {
             <div className="border-b border-ink/15 pb-8">
               <span className="eyebrow text-coral">PRIVACY POLICY</span>
               <h1 className="mt-4 text-3xl font-bold md:text-4xl">Privacy Policy</h1>
+              <h2 className="mt-3 text-xl font-bold">Privacy policy overview</h2>
               <p className="mt-4 max-w-xl leading-7 text-ink/60">How {company.legalName} collects, uses, protects, and manages information when you use our Site and Services.</p>
               <p className="mt-5 text-sm text-ink/50">Last updated: September, 2026</p>
               <div className="mt-6 border-l-4 border-coral bg-cream p-5 text-sm leading-7 text-ink/65"><strong className="block text-ink">Controller details</strong><span className="block">{company.legalName}</span>{company.addressLines.map(line => <span className="block" key={line}>{line}</span>)}<a href={supportMailto} className="mt-2 inline-block font-bold text-coral">{company.supportEmail}</a></div>

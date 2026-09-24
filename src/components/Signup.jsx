@@ -35,7 +35,7 @@ export default function Signup() {
             <div className="relative flex min-h-[560px] flex-col justify-between overflow-hidden px-6 py-12 md:px-14 md:py-16">
               <div className="relative z-10">
                 <span className="eyebrow text-coral">START YOUR STRONGER CHAPTER</span>
-                <h1 className="display mt-8 max-w-xl text-[clamp(4rem,6vw,8.5rem)]">BUILD A ROUTINE<br /><em className="not-italic text-coral">THAT MOVES WITH YOU.</em></h1>
+                <h1 className="display mt-8 max-w-xl text-[clamp(4rem,6vw,8.5rem)]">CREATE YOUR<br /><em className="not-italic text-coral">ACCOUNT.</em></h1>
                 <p className="mt-8 max-w-md text-base leading-7 text-cream/60">Get expert-led workouts, structured programs, and practical coaching designed to fit your goals and your schedule.</p>
               </div>
               <div className="relative z-10 mt-12 flex items-start gap-4 border border-cream/15 bg-cream/5 p-5 text-sm leading-6 text-cream/70"><span className="grid size-10 shrink-0 place-items-center bg-coral text-ink"><Check size={20} /></span><p><strong className="block text-cream">Start with a plan built for real life.</strong>Train at your pace, track every milestone, and adjust your routine as you grow.</p></div>
@@ -57,7 +57,7 @@ export default function Signup() {
                   <>
                     <div className="mb-10 border-b border-ink/15 pb-8">
                       <span className="grid size-12 place-items-center bg-coral/15 text-coral"><UserPlus size={22} /></span>
-                      <h2 className="mt-8 text-4xl font-bold md:text-5xl">Create Your Account</h2>
+                      <h2 className="mt-8 text-4xl font-bold md:text-5xl">Set up your account</h2>
                       <p className="mt-3 text-sm leading-6 text-ink/55">Sign up to start learning with us.</p>
                     </div>
                     <form onSubmit={submit} className="space-y-6">{error && <p role="alert" className="text-red-700">{error}</p>}<fieldset disabled={busy} className="space-y-6">
