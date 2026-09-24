@@ -4,7 +4,7 @@ export const company = {
   siteName: 'TrainWellAcademy.net',
   legalName: 'DEKO 2026 LTD',
   addressLines: [
-    'Town of SANDANSKI, 12 "NADEJDA" STREET',
+    'Town of SANDANSKI, 12 NADEJDA STREET',
     'BLAGOEVGRAD,2800',
     'REPUBLIC OF BULGARIA',
   ],

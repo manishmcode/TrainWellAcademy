@@ -36,9 +36,10 @@ export default function Signup() {
               <div className="relative z-10">
                 <span className="eyebrow text-coral">START YOUR STRONGER CHAPTER</span>
                 <h1 className="display mt-8 max-w-xl text-[clamp(4rem,6vw,8.5rem)]">CREATE YOUR<br /><em className="not-italic text-coral">ACCOUNT.</em></h1>
+                <h2 className="mt-8 max-w-md font-display text-2xl uppercase leading-tight text-coral md:text-3xl">BUILD A ROUTINE THAT MOVES WITH YOU.</h2>
                 <p className="mt-8 max-w-md text-base leading-7 text-cream/60">Get expert-led workouts, structured programs, and practical coaching designed to fit your goals and your schedule.</p>
               </div>
-              <div className="relative z-10 mt-12 flex items-start gap-4 border border-cream/15 bg-cream/5 p-5 text-sm leading-6 text-cream/70"><span className="grid size-10 shrink-0 place-items-center bg-coral text-ink"><Check size={20} /></span><p><strong className="block text-cream">Start with a plan built for real life.</strong>Train at your pace, track every milestone, and adjust your routine as you grow.</p></div>
+              <div className="relative z-10 mt-12 flex items-start gap-4 border border-cream/15 bg-cream/5 p-5 text-sm leading-6 text-cream/70"><span className="grid size-10 shrink-0 place-items-center bg-coral text-ink"><Check size={20} /></span><div><h3 className="font-bold text-cream">Start with a plan built for real life.</h3><p>Train at your pace, track every milestone, and adjust your routine as you grow.</p></div></div>
               <div className="absolute -bottom-40 -right-32 size-[32rem] rounded-full border border-coral/15" />
               <div className="absolute -bottom-16 right-4 size-64 rounded-full border border-coral/15" />
             </div>

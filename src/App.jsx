@@ -48,7 +48,7 @@ export default function App({ pathname }) {
   changed(); window.addEventListener('authchange', changed); window.addEventListener('storage', changed);
   return () => { active = false; window.clearTimeout(expiryTimer); window.removeEventListener('authchange', changed); window.removeEventListener('storage', changed); };
  }, []);
- if (!sessionReady && ['/login','/signup','/checkout','/library','/profile','/live-classes'].includes(path)) return <Page title="Loading"><Notice>Checking your session...</Notice></Page>;
+ if (!pathname && !sessionReady && ['/login','/signup','/checkout','/library','/profile','/live-classes'].includes(path)) return <Page title="Loading"><Notice>Checking your session...</Notice></Page>;
  if (admin && ['/login','/signup','/pricing','/checkout','/library'].includes(path)) return <Redirect to="/live-classes/"/>;
  if (token && ['/login','/signup'].includes(path)) return <Redirect to="/library/"/>;
  if (!token && ['/profile','/live-classes'].includes(path)) return <Redirect to="/login/"/>;

@@ -1,7 +1,23 @@
 import { company } from '../company';
+import { useEffect, useState } from 'react';
+import { getCachedLibraryAccess } from '../services/auth';
 import BrandLogo from './BrandLogo';
 
 export default function Footer() {
+  const [hasLibraryAccess, setHasLibraryAccess] = useState(() => getCachedLibraryAccess() === true);
+
+  useEffect(() => {
+    const updateLibraryAccess = () => setHasLibraryAccess(getCachedLibraryAccess() === true);
+    window.addEventListener('authchange', updateLibraryAccess);
+    window.addEventListener('storage', updateLibraryAccess);
+    window.addEventListener('libraryaccesschange', updateLibraryAccess);
+    return () => {
+      window.removeEventListener('authchange', updateLibraryAccess);
+      window.removeEventListener('storage', updateLibraryAccess);
+      window.removeEventListener('libraryaccesschange', updateLibraryAccess);
+    };
+  }, []);
+
   return (
     <footer className="border-t border-ink/10 bg-cream py-14 text-ink md:py-16">
       <div className="shell">
@@ -17,7 +33,7 @@ export default function Footer() {
           </div>
           <nav className="flex flex-col gap-3 text-sm" aria-label="Quick links">
             <b className="mb-2 text-xs tracking-[.14em] text-coral">QUICK LINKS</b>
-            <a href="/" className="transition hover:text-coral">Home</a><a href="/library" className="transition hover:text-coral">Library</a><a href="/pricing" className="transition hover:text-coral">Pricing</a><a href="/unsubscribe" className="transition hover:text-coral">Unsubscribe</a>
+            <a href="/" className="transition hover:text-coral">Home</a><a href="/library" className="transition hover:text-coral">Library</a>{!hasLibraryAccess && <a href="/pricing" className="transition hover:text-coral">Pricing</a>}<a href="/unsubscribe" className="transition hover:text-coral">Unsubscribe</a>
           </nav>
           <nav className="flex flex-col gap-3 text-sm" aria-label="Legal links">
             <b className="mb-2 text-xs tracking-[.14em] text-coral">LEGAL</b>

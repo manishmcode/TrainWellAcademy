@@ -11,26 +11,26 @@ export default function Imprint() {
           <div>
             <span className="eyebrow text-coral">IMPRINT</span>
             <h1 className="display mt-5 text-4xl md:text-5xl">THE DETAILS<br /><em className="not-italic text-coral">BEHIND TRAINWELL.</em></h1>
-            <h2 className="mt-5 text-xl font-bold">Company and legal information</h2>
+            <p className="mt-5 text-xl font-bold">Company and legal information</p>
             <p className="mt-5 max-w-sm leading-7 text-ink/60">Company information and legal details for the {company.siteName} fitness learning platform.</p>
           </div>
           <div className="grid gap-8 text-sm leading-7 text-ink/65 sm:grid-cols-2">
             <div>
-              <h3 className="mb-3 font-bold text-ink">Company</h3>
+              <h2 className="mb-3 font-bold text-ink">Company</h2>
               <p>{company.legalName}</p>
               {company.addressLines.map(line => <p key={line}>{line}</p>)}
               <p className="mt-3">Tax number: {company.taxNumber}</p>
             </div>
             <div>
-              <h3 className="mb-3 font-bold text-ink">Contact</h3>
+              <h2 className="mb-3 font-bold text-ink">Contact</h2>
               <p>Email: <a className="font-bold text-coral" href={supportMailto}>{company.supportEmail}</a></p>
             </div>
             <div className="border-t border-ink/15 pt-6 sm:col-span-2">
-              <h3 className="mb-3 font-bold text-ink">Content Responsibility</h3>
+              <h2 className="mb-3 font-bold text-ink">Content Responsibility</h2>
               <p>Responsible for the content on this website: {company.legalName}, {company.addressLines.join(', ')}.</p>
             </div>
             <div className="border-t border-ink/15 pt-6 sm:col-span-2">
-              <h3 className="mb-3 font-bold text-ink">Dispute Resolution</h3>
+              <h2 className="mb-3 font-bold text-ink">Dispute Resolution</h2>
               <p>The European Commission provides a platform for online dispute resolution. We are neither obliged nor willing to participate in dispute resolution proceedings before a consumer arbitration board.</p>
             </div>
           </div>

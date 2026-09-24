@@ -118,7 +118,7 @@ export default function Profile() {
                   <label className={labelClass}>FIRST NAME<input className={inputClass} name="firstName" value={form.firstName} onChange={updateField} autoComplete="given-name" placeholder="First name" required /></label>
                   <label className={labelClass}>LAST NAME<input className={inputClass} name="lastName" value={form.lastName} onChange={updateField} autoComplete="family-name" placeholder="Last name" required /></label>
                   <label className={`${labelClass} sm:col-span-2`}>DISPLAY NAME<input className={inputClass} name="displayName" value={form.displayName} onChange={updateField} autoComplete="nickname" placeholder="Display name" required /></label>
-                  <label className={`${labelClass} sm:col-span-2`}>EMAIL / USERNAME<input className={inputClass} name="email" type="email" value={form.email} readOnly autoComplete="email" placeholder="you@example.com" required /></label>
+                  <label className={`${labelClass} sm:col-span-2`}>EMAIL / USERNAME<input className={`${inputClass} cursor-not-allowed`} name="email" type="email" value={form.email} readOnly autoComplete="email" placeholder="you@example.com" required /></label>
                 </div>
 
                 <div className="mt-6 flex flex-col-reverse items-stretch gap-3 sm:flex-row sm:items-center sm:justify-end">
