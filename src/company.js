@@ -5,7 +5,7 @@ export const company = {
   legalName: 'DEKO 2026 LTD',
   addressLines: [
     'Town of SANDANSKI, 12 "NADEJDA" STREET',
-    'BLAGOEVGRAD REGION, 2800',
+    'BLAGOEVGRAD,2800',
     'REPUBLIC OF BULGARIA',
   ],
   taxNumber: 'BG 208889087',

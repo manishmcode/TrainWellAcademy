@@ -36,12 +36,6 @@ export default function Terms() {
               <h1 className="mt-4 text-3xl font-bold md:text-4xl">Terms of Use</h1>
               <p className="mt-4 max-w-xl leading-7 text-ink/60">The rules and responsibilities that help keep the {company.siteName} learning experience clear, fair, and useful.</p>
               <span className="mt-5 block text-sm text-ink/50">Last updated: September, 2026</span>
-              <div className="mt-6 border-l-4 border-coral bg-cream p-5 text-sm leading-7 text-ink/65">
-                <strong className="block text-ink">Controller details</strong>
-                <span className="block">{company.legalName}</span>
-                {company.addressLines.map(line => <span className="block" key={line}>{line}</span>)}
-                <a href={supportMailto} className="mt-2 inline-block font-bold text-coral">{company.supportEmail}</a>
-              </div>
               <div className="mt-8 border-t border-ink/15 pt-8">
                 <p className="mt-5 leading-7 text-ink/65">Please read these Terms and Conditions carefully before using our website and services operated by {company.legalName}, located at {companyAddress}.</p>
                 <p className="mt-5 leading-7 text-ink/65">These Terms apply to all visitors, users, and others who access or use the Service. By accessing or using the Service you agree to be bound by these Terms. If you disagree with any part of the terms then you may not access the Service.</p>

@@ -9,7 +9,7 @@ function organizationSchema(site) {
   return {
     '@type': 'Organization', '@id': `${base}/#organization`, name: site.company.brandName, legalName: site.company.legalName, url: `${base}/`,
     logo: { '@type': 'ImageObject', '@id': `${base}/#logo`, url: `${base}/logo.webp`, contentUrl: `${base}/logo.webp` }, email: site.company.supportEmail,
-    address: { '@type': 'PostalAddress', streetAddress: '12 Nadejda Street', addressLocality: 'Sandanski', postalCode: '2800', addressRegion: 'Blagoevgrad', addressCountry: 'BG' },
+    address: { '@type': 'PostalAddress', streetAddress: '12 Nadejda Street', addressLocality: 'Sandanski', postalCode: '2800', addressRegion: 'Blagoevgrad', addressCountry: 'BULGARIA' },
     contactPoint: { '@type': 'ContactPoint', contactType: 'customer support', email: site.company.supportEmail },
   };
 }
@@ -40,7 +40,6 @@ function schemaFor(route, metadata, site) {
   const canonical = metadata.canonical;
   const websiteId = `${base}/#website`, serviceId = `${base}/#fitness-service`;
   const legalPage = ['/terms', '/privacy', '/imprint'].includes(route);
-  const breadcrumb = breadcrumbSchema(route, canonical, base);
 
   // Informational, legal, and account pages need only one WebPage entity.
   // Keep their organization and website data nested beneath that page so
@@ -57,7 +56,6 @@ function schemaFor(route, metadata, site) {
       isPartOf: { '@type': 'WebSite', '@id': websiteId, url: `${base}/`, name: site.company.brandName, publisher: { '@id': organization['@id'] } },
       ...(legalPage ? { about: { '@id': organization['@id'] } } : {}),
       publisher: organization,
-      ...(breadcrumb ? { breadcrumb } : {}),
     };
   }
 
@@ -68,6 +66,7 @@ function schemaFor(route, metadata, site) {
     { '@type': pageTypes[route] || 'WebPage', '@id': `${canonical}#webpage`, url: canonical, name: metadata.title, description: metadata.description, isPartOf: { '@id': websiteId }, about: { '@id': legalPage ? `${base}/#organization` : serviceId }, publisher: { '@id': `${base}/#organization` }, ...(route === '/pricing' ? { mainEntity: { '@id': `${canonical}#membership-plans` } } : {}), ...(route !== '/' ? { breadcrumb: { '@id': `${canonical}#breadcrumb` } } : {}) },
   ];
   if (route === '/pricing') graph.push(pricingCatalog(canonical, base));
+  const breadcrumb = route === '/pricing' ? breadcrumbSchema(route, canonical, base) : null;
   if (breadcrumb) graph.push(breadcrumb);
   return { '@context': 'https://schema.org', '@graph': graph };
 }
