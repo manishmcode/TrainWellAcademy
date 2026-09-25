@@ -12,7 +12,7 @@ export default function Header() {
   const [open, setOpen] = useState(false);
   const [language, setLanguage] = useState(getSelectedTranslationLanguage);
   const [isAuthenticated, setIsAuthenticated] = useState(() => Boolean(getToken()));
-  const [hasLibraryAccess, setHasLibraryAccess] = useState(() => getCachedLibraryAccess() === true);
+  const [libraryAccess, setLibraryAccess] = useState(() => getCachedLibraryAccess());
 
   useEffect(() => {
     const savedLanguage = getSelectedTranslationLanguage();
@@ -21,7 +21,7 @@ export default function Header() {
       switchGoogleTranslateLanguage(savedLanguage).catch(() => {});
     }
     const updateAuthState = () => setIsAuthenticated(Boolean(getToken()));
-    const updateLibraryAccess = () => setHasLibraryAccess(getCachedLibraryAccess() === true);
+    const updateLibraryAccess = () => setLibraryAccess(getCachedLibraryAccess());
     window.addEventListener('authchange', updateAuthState);
     window.addEventListener('storage', updateAuthState);
     window.addEventListener('authchange', updateLibraryAccess);
@@ -54,7 +54,7 @@ export default function Header() {
           className={`${open ? 'flex' : 'hidden'} absolute inset-x-0 top-[78px] flex-col gap-6 border-b border-ink/15 bg-cream p-8 md:static md:ml-auto md:flex md:flex-row md:items-center md:border-0 md:bg-transparent md:p-0`}
         >
           <a href="/" onClick={() => setOpen(false)}>Home</a>
-          {!hasLibraryAccess && <a href="/pricing" onClick={() => setOpen(false)}>Pricing</a>}
+          {(!isAuthenticated || libraryAccess === false) && <a href="/pricing" onClick={() => setOpen(false)}>Pricing</a>}
           <a href="/library" onClick={() => setOpen(false)}>Library</a>
           <a href="/unsubscribe" onClick={() => setOpen(false)}>Unsubscribe</a>
         </nav>
