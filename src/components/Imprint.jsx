@@ -19,6 +19,7 @@ export default function Imprint() {
               <h2 className="mb-3 font-bold text-ink">Company</h2>
               <p>{company.legalName}</p>
               {company.addressLines.map(line => <p key={line}>{line}</p>)}
+              <p>Director: KONSTANTINOS GEORGIOS KORDENIS</p>
               <p className="mt-3">Tax number: {company.taxNumber}</p>
             </div>
             <div>

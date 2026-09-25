@@ -14,6 +14,27 @@ export default function Header() {
   const [isAuthenticated, setIsAuthenticated] = useState(() => Boolean(getToken()));
   const [libraryAccess, setLibraryAccess] = useState(() => getCachedLibraryAccess());
 
+  function handleHomeClick(event) {
+    setOpen(false);
+    if (
+      event.defaultPrevented ||
+      event.button !== 0 ||
+      event.metaKey ||
+
+
+      
+      event.altKey ||
+      event.ctrlKey ||
+      event.shiftKey
+    )
+      return;
+
+    event.preventDefault();
+    if (window.location.pathname === '/' && !window.location.search && !window.location.hash) return;
+    window.history.pushState(null, '', '/');
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  }
+
   useEffect(() => {
     const savedLanguage = getSelectedTranslationLanguage();
     setLanguage(savedLanguage);
@@ -53,7 +74,7 @@ export default function Header() {
           aria-label="Primary navigation"
           className={`${open ? 'flex' : 'hidden'} absolute inset-x-0 top-[78px] flex-col gap-6 border-b border-ink/15 bg-cream p-8 md:static md:ml-auto md:flex md:flex-row md:items-center md:border-0 md:bg-transparent md:p-0`}
         >
-          <a href="/" onClick={() => setOpen(false)}>Home</a>
+          <a href="/" onClick={handleHomeClick}>Home</a>
           {(!isAuthenticated || libraryAccess === false) && <a href="/pricing" onClick={() => setOpen(false)}>Pricing</a>}
           <a href="/library" onClick={() => setOpen(false)}>Library</a>
           <a href="/unsubscribe" onClick={() => setOpen(false)}>Unsubscribe</a>
