@@ -3,7 +3,7 @@ import { company } from '../company';
 
 export default function BrandLogo({ inverse = false, compact = false }) {
   return (
-    <span className="inline-flex items-center gap-2.5">
+    <span className="notranslate inline-flex items-center gap-2.5" translate="no">
       <span className={`grid size-10 shrink-0 place-items-center ${inverse ? 'bg-coral text-ink' : 'bg-ink text-coral'}`} aria-hidden="true">
         <Dumbbell size={21} strokeWidth={2.5} />
       </span>

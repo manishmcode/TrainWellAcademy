@@ -1,7 +1,28 @@
 import { company } from '../company';
+import { useEffect, useState } from 'react';
+import { getCachedLibraryAccess, getToken } from '../services/auth';
 import BrandLogo from './BrandLogo';
 
 export default function Footer() {
+  const [libraryAccess, setLibraryAccess] = useState(() => getCachedLibraryAccess());
+  const [isAuthenticated, setIsAuthenticated] = useState(() => Boolean(getToken()));
+
+  useEffect(() => {
+    const updateSession = () => {
+      setIsAuthenticated(Boolean(getToken()));
+      setLibraryAccess(getCachedLibraryAccess());
+    };
+    const updateLibraryAccess = () => setLibraryAccess(getCachedLibraryAccess());
+    window.addEventListener('authchange', updateSession);
+    window.addEventListener('storage', updateSession);
+    window.addEventListener('libraryaccesschange', updateLibraryAccess);
+    return () => {
+      window.removeEventListener('authchange', updateSession);
+      window.removeEventListener('storage', updateSession);
+      window.removeEventListener('libraryaccesschange', updateLibraryAccess);
+    };
+  }, []);
+
   return (
     <footer className="border-t border-ink/10 bg-cream py-14 text-ink md:py-16">
       <div className="shell">
@@ -10,14 +31,14 @@ export default function Footer() {
             <a href="/" className="inline-flex" aria-label={`${company.siteName} homepage`}><BrandLogo /></a>
             <p className="mt-6 max-w-xs leading-7 text-ink/60">Build a stronger routine with clear guidance, flexible programs, and coaching that keeps you moving forward.</p>
             <div className="mt-6 flex items-center gap-2" aria-label="Accepted payment methods">
-              <img className="h-10 w-16 rounded-md border border-ink/10 bg-white object-contain p-2 shadow-sm" src="/assets/visa.webp" alt="Visa payment" />
-              <img className="h-10 w-16 rounded-md border border-ink/10 bg-white object-contain p-2 shadow-sm" src="/assets/mastercard.webp" alt="Mastercard payment" />
-              <img className="h-10 w-16 rounded-md border border-ink/10 bg-white object-contain p-2 shadow-sm" src="/assets/sepa.webp" alt="SEPA direct debit" />
+              <img className="h-10 w-16 rounded-md border border-ink/10 bg-white object-contain p-2 shadow-sm" src="/assets/visa-160.webp" width="160" height="65" alt="Visa payment" />
+              <img className="h-10 w-16 rounded-md border border-ink/10 bg-white object-contain p-2 shadow-sm" src="/assets/mastercard-128.webp" width="128" height="95" alt="Mastercard payment" />
+              <img className="h-10 w-16 rounded-md border border-ink/10 bg-white object-contain p-2 shadow-sm" src="/assets/sepa-128.webp" width="128" height="66" alt="SEPA direct debit" />
             </div>
           </div>
           <nav className="flex flex-col gap-3 text-sm" aria-label="Quick links">
             <b className="mb-2 text-xs tracking-[.14em] text-coral">QUICK LINKS</b>
-            <a href="/" className="transition hover:text-coral">Home</a><a href="/library" className="transition hover:text-coral">Library</a><a href="/pricing" className="transition hover:text-coral">Pricing</a><a href="/unsubscribe" className="transition hover:text-coral">Unsubscribe</a>
+            <a href="/" className="transition hover:text-coral">Home</a><a href="/library" className="transition hover:text-coral">Library</a>{(!isAuthenticated || libraryAccess === false) && <a href="/pricing" className="transition hover:text-coral">Pricing</a>}<a href="/unsubscribe" className="transition hover:text-coral">Unsubscribe</a>
           </nav>
           <nav className="flex flex-col gap-3 text-sm" aria-label="Legal links">
             <b className="mb-2 text-xs tracking-[.14em] text-coral">LEGAL</b>
@@ -27,8 +48,8 @@ export default function Footer() {
             <b className="mb-2 block text-xs tracking-[.14em] text-coral">COMPANY DETAILS</b>
             <address className="not-italic text-ink/65">
               <strong className="text-ink">{company.legalName}</strong><br />
-              {company.addressLines.map(line => <span key={line}>{line}<br /></span>)}
-              <span className="font-bold text-ink">TAX NUMBER {company.taxNumber}</span>
+              {company.addressLines.map(line => <span key={line}>{line.replace(' REGION,', ',')}<br /></span>)}
+              <a href={`mailto:${company.supportEmail}`} className="transition hover:text-coral">Email: {company.supportEmail}</a>
             </address>
           </div>
         </div>
