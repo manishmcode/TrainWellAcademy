@@ -34,7 +34,7 @@ export default function Unsubscribe() {
               <LockKeyhole size={14} className="mr-2 inline text-coral" /> SUBSCRIPTION CANCELLATION
             </span>
             <h1 className="display mt-7 max-w-4xl text-[clamp(4rem,6vw,8.5rem)]">
-              WE’RE SORRY TO<br /><em className="not-italic text-coral">SEE YOU GO.</em>
+              Cancel Your <em className="not-italic text-coral">Subscription</em>
             </h1>
             <p className="mt-8 max-w-lg text-base leading-7 text-cream/60">
               To cancel your subscription, enter your details and the last five digits of your IBAN. Your request will be submitted to {company.siteName} support for processing.

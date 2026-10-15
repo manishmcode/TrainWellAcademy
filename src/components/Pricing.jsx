@@ -81,7 +81,7 @@ export default function Pricing() {
               );
             })}
           </div>}
-          <div className="mt-10 flex flex-col justify-between gap-4 border-t border-ink/15 pt-6 text-sm text-ink/60 md:flex-row"><p>Review your selected plan at checkout. Request cancellation anytime.</p><h2 className="font-bold text-ink"><a href="/unsubscribe" className="transition hover:text-coral">Need to cancel a membership? <span className="text-coral">→</span></a></h2></div>
+          <div className="mt-10 flex flex-col justify-between gap-4 border-t border-ink/15 pt-6 text-sm text-ink/60 md:flex-row"><p>Review your selected plan at checkout. Request cancellation anytime.</p><h2 className="font-bold text-ink"><a href="/unsubscribe/" className="transition hover:text-coral">Need to cancel a membership? <span className="text-coral">→</span></a></h2></div>
         </section>
       </main>
       <Footer />

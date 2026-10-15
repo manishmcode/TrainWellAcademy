@@ -38,11 +38,11 @@ export default function Footer() {
           </div>
           <nav className="flex flex-col gap-3 text-sm" aria-label="Quick links">
             <b className="mb-2 text-xs tracking-[.14em] text-coral">QUICK LINKS</b>
-            <a href="/" className="transition hover:text-coral">Home</a><a href="/library" className="transition hover:text-coral">Library</a>{(!isAuthenticated || libraryAccess === false) && <a href="/pricing" className="transition hover:text-coral">Pricing</a>}<a href="/unsubscribe" className="transition hover:text-coral">Unsubscribe</a>
+            <a href="/" className="transition hover:text-coral">Home</a><a href="/library/" className="transition hover:text-coral">Library</a>{(!isAuthenticated || libraryAccess === false) && <a href="/pricing/" className="transition hover:text-coral">Pricing</a>}<a href="/unsubscribe/" className="transition hover:text-coral">Unsubscribe</a>
           </nav>
           <nav className="flex flex-col gap-3 text-sm" aria-label="Legal links">
             <b className="mb-2 text-xs tracking-[.14em] text-coral">LEGAL</b>
-            <a href="/privacy" className="transition hover:text-coral">Privacy Policy</a><a href="/terms" className="transition hover:text-coral">Terms &amp; Conditions</a><a href="/imprint" className="transition hover:text-coral">Imprint</a>
+            <a href="/privacy/" className="transition hover:text-coral">Privacy Policy</a><a href="/terms/" className="transition hover:text-coral">Terms &amp; Conditions</a><a href="/imprint/" className="transition hover:text-coral">Imprint</a>
           </nav>
           <div className="text-sm leading-7">
             <b className="mb-2 block text-xs tracking-[.14em] text-coral">COMPANY DETAILS</b>

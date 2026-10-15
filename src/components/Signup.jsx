@@ -70,7 +70,7 @@ export default function Signup() {
                       <label className="block text-[11px] font-bold tracking-[.16em] text-ink/55">PASSWORD <span className="text-coral">*</span><input className={inputClass} type={visible ? "text" : "password"} name="password" autoComplete="new-password" placeholder="Create a password" minLength="8" required /></label>
                       <label className="block">Confirm password<input className={inputClass} type={visible ? "text" : "password"} name="confirmPassword" autoComplete="new-password" required /></label><button type="button" onClick={() => setVisible(!visible)} className="text-sm font-bold">{visible ? "Hide passwords" : "Show passwords"}</button><button className="btn group w-full justify-center gap-3 bg-ink text-cream hover:bg-coral hover:text-ink" type="submit"><span>SIGN UP</span><KeyRound size={17} className="transition-transform group-hover:rotate-12" /></button>
                     {busy && <p role="status">Please wait...</p>}</fieldset></form>
-                    <p className="mt-7 text-center text-sm text-ink/50">Already have an account? <a href="/login" className="font-bold text-coral hover:text-ink">Login</a></p>
+                    <p className="mt-7 text-center text-sm text-ink/50">Already have an account? <a href="/login/" className="font-bold text-coral hover:text-ink">Login</a></p>
                   </>
                 )}
               </div>

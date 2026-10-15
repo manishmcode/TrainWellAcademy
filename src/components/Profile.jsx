@@ -103,7 +103,7 @@ export default function Profile() {
                   </button>
                 ))}
               </nav>
-              <a href="/login" onClick={clearAuthSession} className="mt-4 flex min-h-12 w-full items-center justify-center gap-2 border border-ink/15 text-[13px] font-bold text-ink/55 transition hover:border-coral hover:text-coral"><LogOut size={17} /> Log Out</a>
+              <a href="/login/" onClick={clearAuthSession} className="mt-4 flex min-h-12 w-full items-center justify-center gap-2 border border-ink/15 text-[13px] font-bold text-ink/55 transition hover:border-coral hover:text-coral"><LogOut size={17} /> Log Out</a>
             </div>
           </aside>
 

@@ -22,8 +22,8 @@ export const seoDefaults = {
       image: 'https://trainwellacademy.net/logo.webp',
     },
     '/unsubscribe': {
-      title: 'Cancel Your Fitness Subscription | TrainWellAcademy',
-      description: 'Cancel your TrainWellAcademy fitness subscription by submitting your account details and the last five digits of your IBAN for verification.',
+      title: 'Cancel Your Subscription | TrainWellAcademy',
+      description: 'Request cancellation of your TrainWellAcademy subscription. Enter your account details and the last five digits of your IBAN for support to verify and process your request.',
       image: 'https://trainwellacademy.net/logo.webp',
     },
     '/terms': {

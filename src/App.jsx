@@ -49,7 +49,7 @@ function Home() {
               </h2>
             </div>
             <a
-              href="/signup"
+              href="/signup/"
               className="w-fit bg-ink px-5 py-4 font-bold text-cream"
             >
               GET STARTED ↗

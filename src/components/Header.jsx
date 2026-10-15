@@ -75,9 +75,9 @@ export default function Header() {
           className={`${open ? 'flex' : 'hidden'} absolute inset-x-0 top-[78px] flex-col gap-6 border-b border-ink/15 bg-cream p-8 md:static md:ml-auto md:flex md:flex-row md:items-center md:border-0 md:bg-transparent md:p-0`}
         >
           <a href="/" onClick={handleHomeClick}>Home</a>
-          {(!isAuthenticated || libraryAccess === false) && <a href="/pricing" onClick={() => setOpen(false)}>Pricing</a>}
-          <a href="/library" onClick={() => setOpen(false)}>Library</a>
-          <a href="/unsubscribe" onClick={() => setOpen(false)}>Unsubscribe</a>
+          {(!isAuthenticated || libraryAccess === false) && <a href="/pricing/" onClick={() => setOpen(false)}>Pricing</a>}
+          <a href="/library/" onClick={() => setOpen(false)}>Library</a>
+          <a href="/unsubscribe/" onClick={() => setOpen(false)}>Unsubscribe</a>
         </nav>
 
         <label
@@ -99,7 +99,7 @@ export default function Header() {
 
         {isAuthenticated && (
           <a
-            href="/profile"
+            href="/profile/"
             className="ml-3 grid size-10 shrink-0 place-items-center rounded-full border border-ink/15 text-ink transition hover:border-coral hover:bg-coral hover:text-ink"
             aria-label="Open profile"
           >
@@ -107,7 +107,7 @@ export default function Header() {
           </a>
         )}
 
-        {!isAuthenticated && <a href="/login" className="btn ml-3 hidden md:inline-flex">LOGIN</a>}
+        {!isAuthenticated && <a href="/login/" className="btn ml-3 hidden md:inline-flex">LOGIN</a>}
 
         <button
           onClick={() => setOpen(!open)}

@@ -1,6 +1,6 @@
 import { canonicalPath, publicRoutes, knownRoutes, normalizePath } from './routes.js';
 
-const labels = { '/pricing': 'Membership plans', '/unsubscribe': 'Cancel membership', '/imprint': 'Imprint', '/privacy': 'Privacy policy', '/terms': 'Terms and conditions', '/login': 'Login', '/signup': 'Create account', '/checkout': 'Checkout', '/library': 'Library', '/profile': 'My account', '/live-classes': 'Manage live classes' };
+const labels = { '/pricing': 'Membership plans', '/unsubscribe': 'Cancel Your Subscription', '/imprint': 'Imprint', '/privacy': 'Privacy policy', '/terms': 'Terms and conditions', '/login': 'Login', '/signup': 'Create account', '/checkout': 'Checkout', '/library': 'Library', '/profile': 'My account', '/live-classes': 'Manage live classes' };
 const pageTypes = { '/library': 'CollectionPage' };
 const pageUrl = (route, siteUrl) => new URL(route === '/' ? '/' : `${route}/`, siteUrl).href;
 
@@ -51,7 +51,7 @@ function schemaFor(route, metadata, site) {
       '@type': pageTypes[route] || 'WebPage',
       '@id': `${canonical}#webpage`,
       url: canonical,
-      name: metadata.title,
+      name: route === '/unsubscribe' ? labels[route] : metadata.title,
       description: metadata.description,
       isPartOf: { '@type': 'WebSite', '@id': websiteId, url: `${base}/`, name: site.company.brandName, publisher: { '@id': organization['@id'] } },
       ...(legalPage ? { about: { '@id': organization['@id'] } } : {}),

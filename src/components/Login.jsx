@@ -66,7 +66,7 @@ export default function Login() {
                       <div className="flex justify-end text-sm"><a href={`mailto:${company.supportEmail}?subject=Password%20reset`} className="font-bold text-coral hover:text-ink">Forgot password?</a></div>
                       <button type="button" onClick={() => setVisible(!visible)} className="text-sm font-bold">{visible ? "Hide passwords" : "Show passwords"}</button><button className="btn group w-full justify-center gap-3 bg-ink text-cream hover:bg-coral hover:text-ink" type="submit"><span>LOGIN</span><KeyRound size={17} className="transition-transform group-hover:rotate-12" /></button>
                     {busy && <p role="status">Please wait...</p>}</fieldset></form>
-                    <p className="mt-7 text-center text-sm text-ink/50">Don&apos;t have an account? <a href="/signup" className="font-bold text-coral hover:text-ink">Sign Up</a></p>
+                    <p className="mt-7 text-center text-sm text-ink/50">Don&apos;t have an account? <a href="/signup/" className="font-bold text-coral hover:text-ink">Sign Up</a></p>
                   </>
                 )}
               </div>
