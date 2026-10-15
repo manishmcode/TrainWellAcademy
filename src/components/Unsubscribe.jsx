@@ -33,7 +33,7 @@ export default function Unsubscribe() {
             <span className="eyebrow text-coral">
               <LockKeyhole size={14} className="mr-2 inline text-coral" /> SUBSCRIPTION CANCELLATION
             </span>
-            <h1 className="display mt-7 max-w-4xl text-[clamp(4rem,6vw,8.5rem)]">
+            <h1 className="display mt-7 max-w-4xl text-[clamp(4rem,6vw,8.5rem)]" style={{ textTransform: 'none' }}>
               Cancel Your <em className="not-italic text-coral">Subscription</em>
             </h1>
             <p className="mt-8 max-w-lg text-base leading-7 text-cream/60">

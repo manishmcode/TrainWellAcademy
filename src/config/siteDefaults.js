@@ -1,7 +1,7 @@
 export const siteDefaults = {
-  website: { name: 'TrainWellAcademy.net', url: 'https://trainwellacademy.net' },
+  website: { name: 'TrainWellAcademy', url: 'https://trainwellacademy.net' },
   company: {
-    brandName: 'TrainWellAcademy', brandShortName: 'TrainWell', siteName: 'TrainWellAcademy.net',
+    brandName: 'TrainWellAcademy', brandShortName: 'TrainWell', siteName: 'TrainWellAcademy',
     legalName: 'DEKO 2026 LTD',
     addressLines: ['Town of SANDANSKI, 12 NADEJDA STREET', 'BLAGOEVGRAD,2800', 'REPUBLIC OF BULGARIA'],
     taxNumber: 'BG 208889087', supportEmail: 'support@trainwellacademy.net',

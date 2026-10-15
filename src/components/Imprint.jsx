@@ -32,7 +32,7 @@ export default function Imprint() {
             </div>
             <div className="border-t border-ink/15 pt-6 sm:col-span-2">
               <h2 className="mb-3 font-bold text-ink">Dispute Resolution</h2>
-              <p>The European Commission provides a platform for online dispute resolution. We are neither obliged nor willing to participate in dispute resolution proceedings before a consumer arbitration board.</p>
+              <p>For questions or concerns regarding our services, please contact us at <a href={supportMailto} className="font-bold text-coral">{company.supportEmail}</a>. We will make reasonable efforts to address your concerns in accordance with applicable law.</p>
             </div>
           </div>
         </div>

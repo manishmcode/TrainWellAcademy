@@ -2,6 +2,7 @@ import { siteDefaults, seoDefaults } from './siteDefaults.js';
 const object = value => value !== null && typeof value === 'object' && !Array.isArray(value);
 const text = value => typeof value === 'string' && value.trim().length > 0;
 const httpUrl = value => { try { return ['http:', 'https:'].includes(new URL(value).protocol); } catch { return false; } };
+const brandName = value => value.trim().replace(/^TrainWellAcademy\.net$/i, 'TrainWellAcademy');
 export function isPublicSiteConfig(value) {
   return object(value) && object(value.website) && text(value.website.name) && httpUrl(value.website.url)
     && object(value.company)
@@ -12,8 +13,9 @@ export function isPublicSiteConfig(value) {
 export function normalizeSiteConfig(value = siteDefaults) {
   if (!isPublicSiteConfig(value)) throw new Error('Invalid public site configuration.');
   return {
-    website: { name: value.website.name.trim(), url: value.website.url.replace(/\/+$/, '') },
-    company: Object.fromEntries(Object.keys(siteDefaults.company).map(key => [key, value.company[key]])),
+    website: { name: brandName(value.website.name), url: value.website.url.replace(/\/+$/, '') },
+    company: Object.fromEntries(Object.keys(siteDefaults.company).map(key => [key,
+      ['brandName', 'brandShortName', 'siteName'].includes(key) ? brandName(value.company[key]) : value.company[key]])),
   };
 }
 export function isSeoConfig(value) {
