@@ -1,6 +1,10 @@
 const TOKEN = 'trainwellacademy_token';
 const USER = 'trainwellacademy_user';
 const LIBRARY_ACCESS = 'trainwellacademy_library_access';
+function setAuthCookie(token) {
+  if (typeof document === 'undefined') return;
+  document.cookie = `${TOKEN}=${encodeURIComponent(token)}; path=/; max-age=2592000; SameSite=Lax${window.location?.protocol === 'https:' ? '; Secure' : ''}`;
+}
 export function clearAuthSession() {
   localStorage.removeItem(TOKEN);
   localStorage.removeItem(USER);
@@ -22,6 +26,7 @@ export function getToken() {
     const part = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
     const payload = JSON.parse(atob(part));
     if (!payload.exp || payload.exp * 1000 <= Date.now()) throw new Error('Expired session');
+    setAuthCookie(token);
     return token;
   } catch { clearAuthSession(); return null; }
 }
@@ -67,6 +72,6 @@ export function saveAuthSession({ token, user }) {
   localStorage.setItem(TOKEN, token);
   saveUser(user);
   sessionStorage.removeItem(LIBRARY_ACCESS);
-  document.cookie = `${TOKEN}=${encodeURIComponent(token)}; path=/; max-age=2592000; SameSite=Lax${location.protocol === 'https:' ? '; Secure' : ''}`;
+  setAuthCookie(token);
   window.dispatchEvent(new Event('authchange'));
 }

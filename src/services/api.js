@@ -35,9 +35,9 @@ async function sendRequest(path, { method, body, auth, signal, envelope }, token
 }
 
 export async function request(path, options = {}) {
-  const { method = 'GET', body, auth = true, signal, envelope = true } = options;
+  const { method = 'GET', body, auth = true, signal, envelope = true, cache = true } = options;
   const token = auth ? getToken() : null;
-  const cacheable = method.toUpperCase() === 'GET' && !signal;
+  const cacheable = cache && method.toUpperCase() === 'GET' && !signal;
   const cacheKey = `${API_ROOT}${path}|${auth ? token || 'guest' : 'public'}|${envelope}`;
 
   if (!cacheable) return sendRequest(path, { method, body, auth, signal, envelope }, token);

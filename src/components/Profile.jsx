@@ -151,6 +151,10 @@ export default function Profile() {
                     <div className="flex justify-between gap-5 pt-4"><dt className="font-bold">Recurring Amount</dt><dd className="font-bold">{formatMoney(subscription.price, subscription.currency || 'EUR')}{subscription.billing_frequency ? ` / ${subscription.billing_frequency}` : ''}</dd></div>
                   </dl>
                 </div>)}
+                {data && <section className="mt-8"><h3 className="text-lg font-bold">Billing address</h3><dl className="mt-4 text-xs">{[
+                  ['Address', data.address], ['Country', data.country], ['City', data.city],
+                  ['Postcode / ZIP', data.postal_code], ['Phone', data.phone], ['Email', data.email],
+                ].map(([label,value])=><div key={label} className="flex justify-between gap-5 border-b border-ink/15 py-4"><dt className="shrink-0 text-ink/55">{label}</dt><dd className="break-words text-right font-bold">{value || '—'}</dd></div>)}</dl></section>}
                 {!loading && !data?.subscriptions?.length && <p className="mt-8 text-sm">No subscriptions yet.</p>}
               </div>
             ) : (

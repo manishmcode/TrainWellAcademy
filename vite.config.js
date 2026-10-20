@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import { readFile } from 'node:fs/promises';
 
@@ -11,7 +11,7 @@ const development404 = {
       const pathname = new URL(req.url || '/', 'http://localhost').pathname.replace(/\/+$/, '') || '/';
       const isAssetRequest = pathname.startsWith('/@') || pathname.startsWith('/src/') || pathname.startsWith('/assets/') || pathname.includes('.');
 
-      if (appRoutes.has(pathname) || pathname.startsWith('/trainwellacademy-api/') || isAssetRequest) return next();
+      if (appRoutes.has(pathname) || pathname.startsWith('/trainwellacademy-api/') || pathname.startsWith('/v/') || isAssetRequest) return next();
 
       try {
         const template = await readFile('index.html', 'utf8');
@@ -26,4 +26,9 @@ const development404 = {
   },
 };
 
-export default defineConfig({ plugins: [react(), development404] });
+export default defineConfig(({mode}) => {
+  const env = loadEnv(mode, process.cwd(), 'VITE_');
+  const target = new URL(env.VITE_API_BASE_URL || 'http://localhost:4000', 'http://localhost:4000').origin;
+  const proxy = { '/v/': { target, changeOrigin: true } };
+  return { plugins: [react(), development404], server: { proxy }, preview: { proxy } };
+});

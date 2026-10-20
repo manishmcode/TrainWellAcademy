@@ -1,7 +1,6 @@
 import { useEffect, lazy, Suspense, useState } from "react";
 import {
   clearAuthSession,
-  getCachedLibraryAccess,
   getToken,
   getTokenExpiry,
   getUser,
@@ -106,11 +105,16 @@ export default function App({ pathname, onRedirect }) {
   const [sessionReady, setSessionReady] = useState(false);
   const [libraryAccess, setLibraryAccess] = useState(false);
   const [libraryAccessReady, setLibraryAccessReady] = useState(false);
+  const [membershipError, setMembershipError] = useState('');
   const admin = !!token && getUser()?.is_admin === true;
   useEffect(() => {
     let active = true,
-      expiryTimer;
-    const changed = async () => {
+      expiryTimer, revision = 0;
+    const changed = async (event) => {
+      if (event?.type === 'storage' && event.key && !['trainwellacademy_token', 'trainwellacademy_user'].includes(event.key)) return;
+      const requestRevision = ++revision;
+      setMembershipError('');
+      setLibraryAccessReady(false);
       window.clearTimeout(expiryTimer);
       const nextToken = getToken();
       if (!active) return;
@@ -127,25 +131,24 @@ export default function App({ pathname, onRedirect }) {
           clearAuthSession,
           Math.max(0, expiresAt - Date.now()),
         );
-      const cachedAccess = getCachedLibraryAccess();
-      if (cachedAccess !== null) {
-        setLibraryAccess(cachedAccess);
+      if (getUser()?.is_admin === true) {
         setLibraryAccessReady(true);
         return;
       }
       setLibraryAccessReady(false);
       try {
-        const dashboard = await fetchDashboard();
-        if (!active) return;
+        const dashboard = await fetchDashboard({ cache: false });
+        if (!active || revision !== requestRevision || getToken() !== nextToken) return;
         const hasAccess = hasActivePlan(dashboard);
         saveUser({ ...getUser(), ...dashboard });
         saveLibraryAccess(hasAccess);
         setLibraryAccess(hasAccess);
-      } catch {
-        if (!active) return;
+      } catch (error) {
+        if (!active || revision !== requestRevision) return;
+        setMembershipError(error.message || 'Unable to check your membership.');
         setLibraryAccess(false);
       } finally {
-        if (active) setLibraryAccessReady(true);
+        if (active && revision === requestRevision) setLibraryAccessReady(true);
       }
     };
     changed();
@@ -197,6 +200,12 @@ export default function App({ pathname, onRedirect }) {
           <Notice>Checking your membership...</Notice>
         </Page>
       );
+    if (membershipError) return (
+      <Page title="Membership unavailable">
+        <Notice>{membershipError}</Notice>
+        <button className="btn mt-5" onClick={() => window.dispatchEvent(new Event('authchange'))}>Try again</button>
+      </Page>
+    );
     if (!libraryAccess)
       return <Redirect to="/pricing/" onRedirect={onRedirect} />;
   }
