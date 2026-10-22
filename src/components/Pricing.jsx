@@ -70,7 +70,8 @@ export default function Pricing() {
                   <div className={`grid size-12 place-items-center ${featured ? 'bg-ink text-coral' : 'bg-coral/15 text-coral'}`}><Icon size={22} /></div>
                   {presentation?.label && <span className={`eyebrow mt-8 text-[10px] ${featured ? 'text-ink/60' : 'text-coral'}`}>{presentation.label}</span>}
                   <h2 className="mt-3 font-display text-4xl uppercase">{plan.name}</h2>
-                  <div className="mt-8 flex items-end gap-2 border-b border-current/15 pb-7"><span className="font-display text-6xl">{formatPrice(plan.price, plan.currency)}</span><span className="pb-2 text-xs opacity-60">/ month</span></div>
+                  <div className="mt-8 flex items-end gap-2"><span className="font-display text-6xl">{formatPrice(plan.price, plan.currency)}</span><span className="pb-2 text-xs opacity-60">/ month</span></div>
+                  <p className="mt-4 border-b border-current/15 pb-6 text-sm leading-5 opacity-70">Billed monthly. Renews automatically unless you cancel.</p>
                   <ul className="my-7 flex-1 space-y-4 text-sm">
                     {features.map((feature) => <li key={feature.name} className={`flex gap-3 ${feature.is_included ? '' : 'opacity-45'}`}>{feature.is_included ? <Check className={`shrink-0 ${featured ? 'text-ink' : 'text-coral'}`} size={17} /> : <X className="shrink-0 text-ink" size={17} />}{feature.name}</li>)}
                   </ul>
