@@ -1,6 +1,6 @@
 import { canonicalPath, publicRoutes, knownRoutes, normalizePath } from './routes.js';
 
-const labels = { '/pricing': 'Membership plans', '/unsubscribe': 'Cancel membership', '/imprint': 'Imprint', '/privacy': 'Privacy policy', '/terms': 'Terms and conditions', '/login': 'Login', '/signup': 'Create account', '/checkout': 'Checkout', '/library': 'Library', '/profile': 'My account', '/live-classes': 'Manage live classes' };
+const labels = { '/pricing': 'Membership plans', '/unsubscribe': 'Cancel Your Subscription', '/imprint': 'Imprint', '/privacy': 'Privacy policy', '/terms': 'Terms and conditions', '/login': 'Login', '/signup': 'Create account', '/checkout': 'Checkout', '/library': 'Library', '/profile': 'My account', '/live-classes': 'Manage live classes' };
 const pageTypes = { '/library': 'CollectionPage' };
 const pageUrl = (route, siteUrl) => new URL(route === '/' ? '/' : `${route}/`, siteUrl).href;
 
@@ -51,7 +51,7 @@ function schemaFor(route, metadata, site) {
       '@type': pageTypes[route] || 'WebPage',
       '@id': `${canonical}#webpage`,
       url: canonical,
-      name: metadata.title,
+      name: route === '/unsubscribe' ? labels[route] : metadata.title,
       description: metadata.description,
       isPartOf: { '@type': 'WebSite', '@id': websiteId, url: `${base}/`, name: site.company.brandName, publisher: { '@id': organization['@id'] } },
       ...(legalPage ? { about: { '@id': organization['@id'] } } : {}),
@@ -76,8 +76,8 @@ export function resolveSeo(path, site, seo) {
   const page = seo.pages[route] || {};
   const known = knownRoutes.includes(normalizePath(path));
   const canonical = pageUrl(route, site.website.url);
-  const image = page.image || seo.defaults.image;
-  const safeImage = (() => { try { const url = new URL(image, site.website.url); return image && ['http:', 'https:'].includes(url.protocol) ? url.href : ''; } catch { return ''; } })();
+  // Use the branded sharing image even when remote SEO configuration supplies page images.
+  const safeImage = new URL('/logo.webp', site.website.url).href;
   const noindex = !publicRoutes.includes(normalizePath(path)) || page.noindex === true;
   const metadata = { title: page.title || (route === '/' ? seo.defaults.title : `${known ? labels[route] || site.website.name : 'Page not found'} | ${site.website.name}`), description: page.description || seo.defaults.description, canonical, image: safeImage, noindex, locale: seo.social.locale };
   return { ...metadata, schema: known ? schemaFor(route, metadata, site) : null };

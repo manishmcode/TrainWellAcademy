@@ -21,6 +21,17 @@ test('public configuration validates shape and drops unrelated fields', () => {
   assert.throws(() => normalizeSeoConfig({ ...seoDefaults, pages: [] }));
   assert.deepEqual(normalizeSeoConfig(seoDefaults), seoDefaults);
 });
+test('legacy domain brand names are normalized without changing URLs or email addresses', () => {
+  const config = normalizeSiteConfig({ ...siteDefaults,
+    website: { ...siteDefaults.website, name: 'TrainWellAcademy.net' },
+    company: { ...siteDefaults.company, siteName: 'TrainWellAcademy.net', brandName: 'TrainWellAcademy.net' },
+  });
+  assert.equal(config.website.name, 'TrainWellAcademy');
+  assert.equal(config.company.siteName, 'TrainWellAcademy');
+  assert.equal(config.company.brandName, 'TrainWellAcademy');
+  assert.equal(config.website.url, siteDefaults.website.url);
+  assert.equal(config.company.supportEmail, siteDefaults.company.supportEmail);
+});
 test('public fetch deduplicates, caches for 60 seconds and retries failed requests', async () => {
   let count = 0, clock = 0, fail = false;
   const client = createPublicConfigClient({ root: 'https://example.com/api', now: () => clock, fetcher: async () => {

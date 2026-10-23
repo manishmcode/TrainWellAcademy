@@ -1,7 +1,7 @@
 export const company = {
   brandName: 'TrainWellAcademy',
   brandShortName: 'TrainWell',
-  siteName: 'TrainWellAcademy.net',
+  siteName: 'TrainWellAcademy',
   legalName: 'DEKO 2026 LTD',
   addressLines: [
     'Town of SANDANSKI, 12 NADEJDA STREET',

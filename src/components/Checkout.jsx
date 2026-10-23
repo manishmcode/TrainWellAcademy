@@ -1,3 +1,4 @@
+import { Link, useNavigate } from 'react-router-dom';
 import { Country } from 'country-state-city';
 import { getCountryCallingCode, parsePhoneNumberFromString } from 'libphonenumber-js';
 import { fetchPlans, post } from '../services/api';
@@ -52,6 +53,7 @@ function BillingCountryPicker({ country, onChange }) {
 }
 
 export default function Checkout() {
+  const navigate = useNavigate();
   const [completed,setCompleted]=useState(false),[plans,setPlans]=useState([]),[planId,setPlanId]=useState(''),[loading,setLoading]=useState(true),[busy,setBusy]=useState(false),[error,setError]=useState(''),[status,setStatus]=useState(''),[country,setCountry]=useState('IN'),[account,setAccount]=useState(null),[member,setMember]=useState(()=>!!getToken()),[verificationUrl,setVerificationUrl]=useState(''),[phoneError,setPhoneError]=useState('');
   const session=useRef(null),submitted=useRef(false),locked=useRef(false),phoneInput=useRef(null);
   const selected=plans.find(plan=>String(plan.id)===String(planId));
@@ -78,7 +80,7 @@ export default function Checkout() {
     const result=await verifyPayment(session.current);
     const outcome=paymentOutcome(result);
     if(outcome==='failed')throw new Error(result.message||'Payment was declined. Contact support before attempting another order.');
-    if(outcome==='complete'){clearPendingPayment();setCompleted(true);sessionStorage.removeItem('trainwellacademy_checkout_plan_id');window.location.assign('/profile/');}
+    if(outcome==='complete'){clearPendingPayment();setCompleted(true);sessionStorage.removeItem('trainwellacademy_checkout_plan_id');navigate('/profile/');}
     else{setStatus('Your payment is pending. Check its status again before placing another order.');setVerificationUrl(safeUrl(result.verificationUrl)||'');}
   }
   async function submit(event){
@@ -116,7 +118,7 @@ export default function Checkout() {
               <span className="eyebrow mt-8 block text-coral">PAYMENT RECEIVED</span>
               <h1 className="display mt-5 text-5xl md:text-7xl">YOU’RE READY<br /><em className="not-italic text-coral">TO MOVE.</em></h1>
               <p className="mx-auto mt-6 max-w-md leading-7 text-ink/60">Your {company.siteName} membership is being prepared. We’ll send your access details to your email shortly.</p>
-              <a href="/#courses" className="btn mt-8 gap-3">OPEN THE LIBRARY <ArrowRight size={17} /></a>
+              <Link to="/#courses" className="btn mt-8 gap-3">OPEN THE LIBRARY <ArrowRight size={17} /></Link>
             </div>
           ) : (
             <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
@@ -157,8 +159,8 @@ export default function Checkout() {
                 </fieldset>
 
                 <div className="mt-7 flex items-start gap-3 border border-ink/15 bg-cream p-4 text-xs leading-5 text-ink/60"><ShieldCheck className="mt-0.5 shrink-0 text-coral" size={17} /><p>Payment information is encrypted and secure. No card or bank details are stored on this device.</p></div>
-                <p className="mt-5 text-center text-[11px] leading-4 text-ink/55">Your personal data will be used to process your order, support your experience throughout this website, and for other purposes described in our <a href="/privacy/" className="font-bold text-coral hover:text-ink">Privacy Policy</a>.</p>
-                <label className="mt-3 flex items-start gap-3 text-xs leading-5 text-ink/65"><input className="mt-1 size-4 shrink-0 accent-coral" type="checkbox" required /><span>By proceeding with this payment, I confirm that I have read and agree to the <a href="/terms/" className="font-bold text-coral">Terms and Conditions</a> and <a href="/privacy/" className="font-bold text-coral">Privacy Policy</a>.</span></label>
+                <p className="mt-5 text-center text-[11px] leading-4 text-ink/55">Your personal data will be used to process your order, support your experience throughout this website, and for other purposes described in our <Link to="/privacy/" className="font-bold text-coral hover:text-ink">Privacy Policy</Link>.</p>
+                <label className="mt-3 flex items-start gap-3 text-xs leading-5 text-ink/65"><input className="mt-1 size-4 shrink-0 accent-coral" type="checkbox" required /><span>By proceeding with this payment, I confirm that I have read and agree to the <Link to="/terms/" className="font-bold text-coral">Terms and Conditions</Link> and <Link to="/privacy/" className="font-bold text-coral">Privacy Policy</Link>.</span></label>
                 </fieldset><button disabled className="btn group mt-6 w-full justify-center gap-3 bg-coral text-ink hover:bg-ink hover:text-cream" type="submit"><span>{busy ? 'PROCESSING...' : submitted.current ? 'CHECK PAYMENT STATUS' : 'COMPLETE YOUR ORDER NOW'}</span><ArrowRight size={17} className="transition-transform group-hover:translate-x-1" /></button>
               </form>
 

@@ -1,3 +1,4 @@
+import { Link, useNavigate } from 'react-router-dom';
 import { post } from '../services/api';
 import { saveAuthSession } from '../services/auth';
 import { ArrowRight, Check, KeyRound, UserPlus } from 'lucide-react';
@@ -9,6 +10,7 @@ import Header from './Header';
 const inputClass = 'mt-2 block h-12 w-full border-b-2 border-ink/20 bg-transparent px-0 text-sm outline-none transition placeholder:text-ink/30 focus:border-coral';
 
 export default function Signup() {
+  const navigate = useNavigate();
   const [created, setCreated] = useState(false);
 
   const [busy, setBusy] = useState(false);
@@ -22,7 +24,7 @@ export default function Signup() {
       if (v.password !== v.confirmPassword) throw new Error('Passwords do not match.');
       const result = await post('/auth/signup', { name: v.firstName.trim()+' '+v.lastName.trim(), email: v.email.trim(), password: v.password }, { auth: false });
       saveAuthSession(result);
-      window.location.assign(result.user.is_admin ? '/live-classes/' : '/library/');
+      navigate(result.user.is_admin ? '/live-classes/' : '/library/');
     } catch (e) { setError(e.message); } finally { setBusy(false); }
   }
 
@@ -52,7 +54,7 @@ export default function Signup() {
                     <span className="eyebrow mt-7 block text-coral">ACCOUNT CREATED</span>
                     <h2 className="display mt-4 text-5xl md:text-6xl">WELCOME<br /><em className="not-italic text-coral">ABOARD.</em></h2>
                     <p className="mt-6 leading-7 text-ink/60">Your personalized {company.siteName} library is ready to explore.</p>
-                    <a href="/#courses" className="btn mt-8 gap-3">OPEN MY LIBRARY <ArrowRight size={17} /></a>
+                    <Link to="/#courses" className="btn mt-8 gap-3">OPEN MY LIBRARY <ArrowRight size={17} /></Link>
                   </div>
                 ) : (
                   <>
@@ -70,7 +72,7 @@ export default function Signup() {
                       <label className="block text-[11px] font-bold tracking-[.16em] text-ink/55">PASSWORD <span className="text-coral">*</span><input className={inputClass} type={visible ? "text" : "password"} name="password" autoComplete="new-password" placeholder="Create a password" minLength="8" required /></label>
                       <label className="block">Confirm password<input className={inputClass} type={visible ? "text" : "password"} name="confirmPassword" autoComplete="new-password" required /></label><button type="button" onClick={() => setVisible(!visible)} className="text-sm font-bold">{visible ? "Hide passwords" : "Show passwords"}</button><button className="btn group w-full justify-center gap-3 bg-ink text-cream hover:bg-coral hover:text-ink" type="submit"><span>SIGN UP</span><KeyRound size={17} className="transition-transform group-hover:rotate-12" /></button>
                     {busy && <p role="status">Please wait...</p>}</fieldset></form>
-                    <p className="mt-7 text-center text-sm text-ink/50">Already have an account? <a href="/login" className="font-bold text-coral hover:text-ink">Login</a></p>
+                    <p className="mt-7 text-center text-sm text-ink/50">Already have an account? <Link to="/login/" className="font-bold text-coral hover:text-ink">Login</Link></p>
                   </>
                 )}
               </div>

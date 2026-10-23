@@ -4,6 +4,12 @@ RewriteEngine On
 RewriteCond %{HTTP_HOST} ^www\.trainwellacademy\.net$ [NC]
 RewriteRule ^ https://trainwellacademy.net%{REQUEST_URI} [R=301,L]
 
+# Block direct library files while allowing frontend hashed assets.
+RewriteRule ^assets/[0-9]+(?:/|$) - [R=404,L,NC]
+
+# Preserve /v/ in the browser and dispatch through the existing Node app mount.
+RewriteRule ^v/([A-Za-z0-9_.-]+)$ /trainwellacademy-api/v/$1 [L]
+
 # Redirect guests before the private library document or SPA shell is served.
 RewriteCond %{HTTP:Cookie} !(^|;[[:space:]]*)trainwellacademy_token= [NC]
 RewriteRule ^library/?$ /pricing/ [R=307,L,NE]

@@ -1,4 +1,5 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
+import { BrowserRouter, useLocation } from 'react-router-dom';
 import { createRoot, hydrateRoot } from 'react-dom/client';
 import App from './App';
 import { applySiteConfig } from './company';
@@ -12,22 +13,15 @@ import { resolveSeo } from './config/seoConfig.js';
 import './index.css';
 
 function ClientApp({ site, seo }) {
-  const [pathname, setPathname] = useState(() => window.location.pathname);
+  const { pathname, hash, key } = useLocation();
   const metadata = resolveSeo(pathname, site, seo);
-  const redirect = useCallback((to) => {
-    const destination = new URL(to, window.location.origin);
-    const nextPath = `${destination.pathname}${destination.search}${destination.hash}`;
-    if (`${window.location.pathname}${window.location.search}${window.location.hash}` !== nextPath) window.history.replaceState(null, '', nextPath);
-    setPathname(destination.pathname);
-  }, []);
 
   useEffect(() => {
-    const syncPathname = () => setPathname(window.location.pathname);
-    window.addEventListener('popstate', syncPathname);
-    return () => window.removeEventListener('popstate', syncPathname);
-  }, []);
+    if (hash) document.getElementById(decodeURIComponent(hash.slice(1)))?.scrollIntoView();
+    else window.scrollTo(0, 0);
+  }, [pathname, hash, key]);
 
-  return <SiteConfigProvider config={site}><SEOHead metadata={metadata}/><App pathname={pathname} onRedirect={redirect}/></SiteConfigProvider>;
+  return <SiteConfigProvider config={site}><SEOHead metadata={metadata}/><App pathname={pathname}/></SiteConfigProvider>;
 }
 
 async function start() {
@@ -45,7 +39,7 @@ async function start() {
     if (results.some(result => result.status === 'rejected')) console.warn('Published configuration unavailable; using local defaults.');
   }
   applySiteConfig(site);
-  const app = <React.StrictMode><ClientApp site={site} seo={seo}/></React.StrictMode>;
+  const app = <React.StrictMode><BrowserRouter><ClientApp site={site} seo={seo}/></BrowserRouter></React.StrictMode>;
   const root = document.getElementById('root');
   if (root.hasChildNodes()) hydrateRoot(root, app);
   else createRoot(root).render(app);

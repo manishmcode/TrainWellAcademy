@@ -1,6 +1,4 @@
-import { request } from '../services/api';
-import { getUser } from '../services/auth';
-import { safeUrl } from '../services/urls';
+import { fetchLibrary, libraryRefreshDelay } from '../services/library';
 import { ArrowUpRight, BookOpen, LoaderCircle, Play, Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import Footer from './Footer';
@@ -13,21 +11,26 @@ const categoryOrder = [
   'Kettlebell Training',
 ];
 
-const libraryAssetVersion = '1222XZX';
-const withLibraryAssetVersion = (url) => {
-  if (!url || url.includes(libraryAssetVersion)) return url;
-  return `${url}${url.includes('?') ? '&' : '?'}${libraryAssetVersion}`;
-};
-
 export default function Library() {
  const [activeTrackId,setActiveTrackId]=useState(''),[categoryQuery,setCategoryQuery]=useState('');
- const [rows,setRows]=useState([]),[loading,setLoading]=useState(true),[error,setError]=useState(''),[lockedModule,setLockedModule]=useState(null);
- async function load(){setLoading(true);setError('');try{const library=await request('/library');if(!Array.isArray(library))throw new Error('Invalid library response.');setRows(library);}catch(e){setError(e.message);}finally{setLoading(false);}}
- function selectTrack(trackId){setActiveTrackId(trackId);window.scrollTo({top:0,behavior:'smooth'});}
- function currentPlanId(){const user=getUser();return Number(user?.plan_id??user?.user_meta?.plan_id??0);}
- function canOpen(module){const planId=currentPlanId();return planId===2||planId===5||(Array.isArray(module.plan_ids)&&module.plan_ids.map(Number).includes(planId));}
- function openModule(event,module){if(canOpen(module))return;event.preventDefault();setLockedModule(module);}
- useEffect(()=>{load();},[]);
+ const [rows,setRows]=useState([]),[loading,setLoading]=useState(true),[error,setError]=useState('');
+ const [visibleCount,setVisibleCount]=useState(12),[retry,setRetry]=useState(0);
+ function load(){setRetry(value=>value+1);}
+ function selectTrack(trackId){setActiveTrackId(trackId);setVisibleCount(12);window.scrollTo({top:0,behavior:'smooth'});}
+ useEffect(()=>{
+   let disposed=false,pending=false,timer,refreshAt=Infinity;
+   function schedule(delay){window.clearTimeout(timer);refreshAt=delay===null?Infinity:Date.now()+delay;if(delay!==null)timer=window.setTimeout(refresh,delay);}
+   async function refresh(){
+     if(disposed||pending)return;
+     pending=true;
+     try{const library=await fetchLibrary();if(disposed)return;setRows(library);setError('');schedule(libraryRefreshDelay(library));}
+     catch(e){if(!disposed){setError(e.message);schedule(e.status===401?null:30000);}}
+     finally{pending=false;if(!disposed)setLoading(false);}
+   }
+   function resume(){if(document.visibilityState==='visible'&&Date.now()>=refreshAt)refresh();}
+   refresh();window.addEventListener('focus',resume);document.addEventListener('visibilitychange',resume);
+   return()=>{disposed=true;window.clearTimeout(timer);window.removeEventListener('focus',resume);document.removeEventListener('visibilitychange',resume);};
+ },[retry]);
  const tracks=rows.map(row=>({id:row.title,name:row.title,count:row.cards.length})).sort((a,b)=>{
   const aRank = categoryOrder.indexOf(a.name);
   const bRank = categoryOrder.indexOf(b.name);
@@ -41,8 +44,8 @@ export default function Library() {
  const modules=(rows.find(row=>row.title===activeTrack.name)?.cards||[]).map((card,index)=>({
   ...card,
   id:index,
-  image:withLibraryAssetVersion(card.image),
-  link:withLibraryAssetVersion(card.link),
+  image:card.image,
+  link:card.link,
  }));
   return (
     <div className="min-h-screen bg-cream text-ink">
@@ -70,23 +73,23 @@ export default function Library() {
             </aside>
 
             <div className="min-w-0">
-                {loading ? <div role="status" aria-label="Loading library" className="grid min-h-[300px] place-items-center gap-3 text-sm font-bold text-ink/50"><LoaderCircle size={30} className="animate-spin text-coral" /><span>Loading library...</span></div> : <section className="library-module-grid gap-5" aria-label={`${activeTrack.name} modules`}>
-                  {modules.map((module, index) => (
+                {loading ? <div role="status" aria-label="Loading library" className="grid min-h-[300px] place-items-center gap-3 text-sm font-bold text-ink/50"><LoaderCircle size={30} className="animate-spin text-coral" /><span>Loading library...</span></div> : <section key={activeTrack.id} className="library-module-grid gap-5" aria-label={`${activeTrack.name} modules`}>
+                  {modules.slice(0,visibleCount).map((module, index) => (
                     <article key={module.id} className="group overflow-hidden rounded-2xl border border-ink/10 bg-white transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(23,27,25,0.1)]">
-                      <a href={safeUrl(module.link)} onClick={(event)=>openModule(event,module)} target="_blank" rel="noopener noreferrer" className="relative block aspect-video overflow-hidden bg-cream"><img className="object-contain opacity-90 transition duration-500 group-hover:scale-105" src={module.image} alt="" loading="lazy" /><span className="absolute left-3 top-3 rounded-full bg-ink/80 px-2.5 py-1.5 text-[9px] font-bold tracking-[.08em] text-cream backdrop-blur">MODULE {String(index + 1).padStart(2, '0')}</span><span className="absolute inset-0 grid place-items-center opacity-0 transition group-hover:opacity-100"><i className="grid size-12 place-items-center rounded-full bg-coral text-ink not-italic"><Play size={15} fill="currentColor" /></i></span></a>
+                      <a href={module.link || undefined} aria-disabled={!module.link} target="_blank" rel="noopener noreferrer" className="relative block aspect-video overflow-hidden bg-cream"><img className="object-contain opacity-90 transition duration-500 group-hover:scale-105" src={module.image || undefined} alt={module.title} loading={index < 3 ? "eager" : "lazy"} fetchPriority={index < 3 ? "high" : "auto"} decoding="async" width={640} height={360} /><span className="absolute left-3 top-3 rounded-full bg-ink/80 px-2.5 py-1.5 text-[9px] font-bold tracking-[.08em] text-cream backdrop-blur">MODULE {String(index + 1).padStart(2, '0')}</span><span className="absolute inset-0 grid place-items-center opacity-0 transition group-hover:opacity-100"><i className="grid size-12 place-items-center rounded-full bg-coral text-ink not-italic"><Play size={15} fill="currentColor" /></i></span></a>
                       <div className="flex min-h-[164px] flex-col p-5">
                         <div className="flex items-center gap-2 text-[10px] font-bold tracking-[.08em] text-coral"><Play size={11} fill="currentColor" />RESOURCE <span className="text-ink/30">•</span><span className="text-ink/40">{module.length}</span></div>
                         <h2 className="mt-3 text-sm font-bold leading-6">{module.title}</h2>
-                        <a href={safeUrl(module.link)} onClick={(event)=>openModule(event,module)} target="_blank" rel="noopener noreferrer" className="mt-auto flex items-center justify-between border-t border-ink/10 pt-4 text-[10px] font-bold text-ink/50 transition hover:text-coral">OPEN RESOURCE <span className="grid size-8 place-items-center rounded-full bg-cream text-coral"><ArrowUpRight size={14} /></span></a>
+                        <a href={module.link || undefined} aria-disabled={!module.link} target="_blank" rel="noopener noreferrer" className="mt-auto flex items-center justify-between border-t border-ink/10 pt-4 text-[10px] font-bold text-ink/50 transition hover:text-coral">OPEN RESOURCE <span className="grid size-8 place-items-center rounded-full bg-cream text-coral"><ArrowUpRight size={14} /></span></a>
                       </div>
                     </article>
                   ))}
                 </section>}
+                {!loading && visibleCount < modules.length && <button className="btn mt-6 bg-ink text-cream" onClick={()=>setVisibleCount(count=>count+12)}>Show more modules</button>}
             </div>
           </div>
       </main>
       <Footer />
-      {lockedModule && <div className="fixed inset-0 z-50 grid place-items-center bg-ink/65 p-5" role="dialog" aria-modal="true" aria-labelledby="locked-video-title"><div className="w-full max-w-md bg-cream p-7 text-center shadow-2xl"><h2 id="locked-video-title" className="font-display text-3xl uppercase">Video unavailable</h2><p className="mt-4 text-sm leading-6 text-ink/65">This video isn&apos;t included in your current plan. Please upgrade to watch it.</p><button onClick={()=>setLockedModule(null)} className="btn mt-7 bg-ink text-cream hover:bg-coral">BACK</button></div></div>}
     </div>
   );
 }

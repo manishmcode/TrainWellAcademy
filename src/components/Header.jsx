@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { Globe, Menu, UserRound, X } from 'lucide-react';
 import { company } from '../company';
@@ -13,27 +14,6 @@ export default function Header() {
   const [language, setLanguage] = useState(getSelectedTranslationLanguage);
   const [isAuthenticated, setIsAuthenticated] = useState(() => Boolean(getToken()));
   const [libraryAccess, setLibraryAccess] = useState(() => getCachedLibraryAccess());
-
-  function handleHomeClick(event) {
-    setOpen(false);
-    if (
-      event.defaultPrevented ||
-      event.button !== 0 ||
-      event.metaKey ||
-
-
-      
-      event.altKey ||
-      event.ctrlKey ||
-      event.shiftKey
-    )
-      return;
-
-    event.preventDefault();
-    if (window.location.pathname === '/' && !window.location.search && !window.location.hash) return;
-    window.history.pushState(null, '', '/');
-    window.dispatchEvent(new PopStateEvent('popstate'));
-  }
 
   useEffect(() => {
     const savedLanguage = getSelectedTranslationLanguage();
@@ -66,18 +46,18 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-ink/15 bg-cream/95 backdrop-blur">
       <div className="shell flex h-[78px] items-center">
-        <a href="/" aria-label={`${company.siteName} homepage`}>
+        <Link to="/" aria-label={`${company.siteName} homepage`}>
           <BrandLogo compact />
-        </a>
+        </Link>
 
         <nav
           aria-label="Primary navigation"
           className={`${open ? 'flex' : 'hidden'} absolute inset-x-0 top-[78px] flex-col gap-6 border-b border-ink/15 bg-cream p-8 md:static md:ml-auto md:flex md:flex-row md:items-center md:border-0 md:bg-transparent md:p-0`}
         >
-          <a href="/" onClick={handleHomeClick}>Home</a>
-          {(!isAuthenticated || libraryAccess === false) && <a href="/pricing" onClick={() => setOpen(false)}>Pricing</a>}
-          <a href="/library" onClick={() => setOpen(false)}>Library</a>
-          <a href="/unsubscribe" onClick={() => setOpen(false)}>Unsubscribe</a>
+          <Link to="/" onClick={() => setOpen(false)}>Home</Link>
+          {(!isAuthenticated || libraryAccess === false) && <Link to="/pricing/" onClick={() => setOpen(false)}>Pricing</Link>}
+          <Link to="/library/" onClick={() => setOpen(false)}>Library</Link>
+          <Link to="/unsubscribe/" onClick={() => setOpen(false)}>Unsubscribe</Link>
         </nav>
 
         <label
@@ -98,16 +78,16 @@ export default function Header() {
         </label>
 
         {isAuthenticated && (
-          <a
-            href="/profile"
+          <Link
+            to="/profile/"
             className="ml-3 grid size-10 shrink-0 place-items-center rounded-full border border-ink/15 text-ink transition hover:border-coral hover:bg-coral hover:text-ink"
             aria-label="Open profile"
           >
             <UserRound size={19} />
-          </a>
+          </Link>
         )}
 
-        {!isAuthenticated && <a href="/login" className="btn ml-3 hidden md:inline-flex">LOGIN</a>}
+        {!isAuthenticated && <Link to="/login/" className="btn ml-3 hidden md:inline-flex">LOGIN</Link>}
 
         <button
           onClick={() => setOpen(!open)}

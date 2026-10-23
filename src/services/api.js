@@ -20,11 +20,21 @@ async function sendRequest(path, { method, body, auth, signal, envelope }, token
     if (error.name === 'AbortError') throw error;
     throw new Error('Unable to reach the server. Please try again.');
   }
+  // Authentication can fail with an empty or HTML response body.
+  // Ignore a late response belonging to a session that has since changed.
+  const invalidateSession = () => {
+    if (token && getToken() === token) clearAuthSession({ reason: 'invalid' });
+  };
+  if (response.status === 401) invalidateSession();
   let result;
-  try { result = await response.json(); } catch { throw new Error('The server returned an invalid response.'); }
+  try { result = await response.json(); } catch {
+    const error = new Error(response.status === 401 ? 'Your session has expired. Please log in again.' : 'The server returned an invalid response.');
+    error.status = response.status;
+    throw error;
+  }
   if (!result || typeof result !== 'object') throw new Error('The server returned an invalid response.');
   const userWasNotFound = response.status === 404 && /user\s+not\s+found/i.test(String(result.message || ''));
-  if (token && (response.status === 401 || userWasNotFound) && path !== '/auth/change-password') clearAuthSession();
+  if (userWasNotFound) invalidateSession();
   if (!response.ok || result.success === false) {
     const error = new Error(result.message || `Request failed (${response.status}).`);
     error.status = response.status;
@@ -35,9 +45,9 @@ async function sendRequest(path, { method, body, auth, signal, envelope }, token
 }
 
 export async function request(path, options = {}) {
-  const { method = 'GET', body, auth = true, signal, envelope = true } = options;
+  const { method = 'GET', body, auth = true, signal, envelope = true, cache = true } = options;
   const token = auth ? getToken() : null;
-  const cacheable = method.toUpperCase() === 'GET' && !signal;
+  const cacheable = cache && method.toUpperCase() === 'GET' && !signal;
   const cacheKey = `${API_ROOT}${path}|${auth ? token || 'guest' : 'public'}|${envelope}`;
 
   if (!cacheable) return sendRequest(path, { method, body, auth, signal, envelope }, token);

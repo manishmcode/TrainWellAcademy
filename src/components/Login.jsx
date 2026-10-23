@@ -1,3 +1,4 @@
+import { Link, useNavigate } from 'react-router-dom';
 import { post } from '../services/api';
 import { saveAuthSession } from '../services/auth';
 import { ArrowRight, Check, KeyRound, LogIn } from 'lucide-react';
@@ -9,6 +10,7 @@ import Header from './Header';
 const inputClass = 'mt-2 block h-12 w-full border-b-2 border-ink/20 bg-transparent px-0 text-sm outline-none transition placeholder:text-ink/30 focus:border-coral';
 
 export default function Login() {
+  const navigate = useNavigate();
   const [loggedIn, setLoggedIn] = useState(false);
 
   const [busy, setBusy] = useState(false);
@@ -21,7 +23,7 @@ export default function Login() {
     try {
       const result = await post('/auth/login', { email: v.email.trim(), password: v.password }, { auth: false });
       saveAuthSession(result);
-      window.location.assign(result.user.is_admin ? '/live-classes/' : '/library/');
+      navigate(result.user.is_admin ? '/live-classes/' : '/library/');
     } catch (e) { setError(e.message); } finally { setBusy(false); }
   }
 
@@ -50,7 +52,7 @@ export default function Login() {
                     <span className="eyebrow mt-7 block text-coral">WELCOME BACK</span>
                     <h2 className="display mt-4 text-5xl md:text-6xl">YOU’RE IN.</h2>
                     <p className="mt-6 leading-7 text-ink/60">Your {company.siteName} library is ready. We’ll take you back to your programs now.</p>
-                    <a href="/#courses" className="btn mt-8 gap-3">OPEN MY LIBRARY <ArrowRight size={17} /></a>
+                    <Link to="/#courses" className="btn mt-8 gap-3">OPEN MY LIBRARY <ArrowRight size={17} /></Link>
                   </div>
                 ) : (
                   <>
@@ -66,7 +68,7 @@ export default function Login() {
                       <div className="flex justify-end text-sm"><a href={`mailto:${company.supportEmail}?subject=Password%20reset`} className="font-bold text-coral hover:text-ink">Forgot password?</a></div>
                       <button type="button" onClick={() => setVisible(!visible)} className="text-sm font-bold">{visible ? "Hide passwords" : "Show passwords"}</button><button className="btn group w-full justify-center gap-3 bg-ink text-cream hover:bg-coral hover:text-ink" type="submit"><span>LOGIN</span><KeyRound size={17} className="transition-transform group-hover:rotate-12" /></button>
                     {busy && <p role="status">Please wait...</p>}</fieldset></form>
-                    <p className="mt-7 text-center text-sm text-ink/50">Don&apos;t have an account? <a href="/signup" className="font-bold text-coral hover:text-ink">Sign Up</a></p>
+                    <p className="mt-7 text-center text-sm text-ink/50">Don&apos;t have an account? <Link to="/signup/" className="font-bold text-coral hover:text-ink">Sign Up</Link></p>
                   </>
                 )}
               </div>

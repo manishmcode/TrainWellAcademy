@@ -1,6 +1,10 @@
 import { request } from './api.js';
-export const fetchDashboard = () => request('/user/dashboard');
+export const fetchDashboard = (options = {}) => request('/user/dashboard', options);
 export function hasActivePlan(data) {
+  if (data && Object.hasOwn(data, 'plan_id')) {
+    const id = Number(data.plan_id);
+    return Number.isInteger(id) && id > 0;
+  }
   if (typeof data?.has_active_plan === 'boolean') return data.has_active_plan;
   return (data?.subscriptions || []).some(sub => {
     const status = String(sub.status).trim().toLowerCase();
