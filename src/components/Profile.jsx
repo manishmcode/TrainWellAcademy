@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { Check, CreditCard, FileText, KeyRound, LogOut, Save, UserRound } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { fetchDashboard } from '../services/account';
@@ -103,7 +104,7 @@ export default function Profile() {
                   </button>
                 ))}
               </nav>
-              <a href="/login/" onClick={clearAuthSession} className="mt-4 flex min-h-12 w-full items-center justify-center gap-2 border border-ink/15 text-[13px] font-bold text-ink/55 transition hover:border-coral hover:text-coral"><LogOut size={17} /> Log Out</a>
+              <Link to="/login/" onClick={clearAuthSession} className="mt-4 flex min-h-12 w-full items-center justify-center gap-2 border border-ink/15 text-[13px] font-bold text-ink/55 transition hover:border-coral hover:text-coral"><LogOut size={17} /> Log Out</Link>
             </div>
           </aside>
 

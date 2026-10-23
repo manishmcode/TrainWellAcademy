@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { post } from '../services/api';
 import { ArrowLeft, ArrowRight, Check, LockKeyhole, Mail, ShieldCheck, UserRound } from 'lucide-react';
 import { useState } from 'react';
@@ -56,9 +57,9 @@ export default function Unsubscribe() {
                   <Mail className="mt-0.5 shrink-0 text-coral" size={18} />
                   <p>Contact support if you need help with your cancellation request.</p>
                 </div>
-                <a href="/" className="btn group mt-8 gap-3">
+                <Link to="/" className="btn group mt-8 gap-3">
                   Back to {company.brandShortName} <ArrowRight className="transition-transform group-hover:translate-x-1" size={17} />
-                </a>
+                </Link>
               </div>
             ) : (
               <div className="p-6 sm:p-9 md:px-12 md:py-10">
@@ -93,7 +94,7 @@ export default function Unsubscribe() {
                   </button>
                 {busy && <p role="status">Submitting request...</p>}</fieldset></form>
 
-                <a href="/" className="mt-5 flex items-center justify-center gap-2 text-sm text-ink/45 transition hover:text-coral"><ArrowLeft size={14} /> Cancel, keep me subscribed</a>
+                <Link to="/" className="mt-5 flex items-center justify-center gap-2 text-sm text-ink/45 transition hover:text-coral"><ArrowLeft size={14} /> Cancel, keep me subscribed</Link>
               </div>
             )}
           </div>

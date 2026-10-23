@@ -76,10 +76,10 @@ test('public routes hydrate, assets load and unknown routes return 404', async (
 
 test('guest and expired sessions are redirected without private content', async ({ page }) => {
   await api(page);
-  await page.goto('/library/'); await expect(page).toHaveURL(/\/pricing\//);
+  await page.goto('/library/'); await expect(page).toHaveURL(/\/login\//);
   await page.goto('/profile/'); await expect(page).toHaveURL(/\/login\//);
   await signIn(page, false, true);
-  await page.goto('/library/'); await expect(page).toHaveURL(/\/pricing\//);
+  await page.goto('/library/'); await expect(page).toHaveURL(/\/login\//);
   expect(await page.evaluate(() => localStorage.getItem('trainwellacademy_token'))).toBeNull();
 });
 
@@ -91,8 +91,8 @@ test('inactive membership and dashboard failures do not grant library access', a
   await page.goto('/library/'); await expect(page.getByRole('alert')).toContainText('Test API failure');
   expect(page.url()).toContain('/library/');
   state.status = 401;
-  await page.getByRole('button', { name: 'Retry', exact: true }).click();
-  await expect(page).toHaveURL(/\/pricing\//);
+  await page.getByRole('button', { name: 'Try again', exact: true }).click();
+  await expect(page).toHaveURL(/\/login\//);
 });
 
 test('login errors, successful login and signup password validation', async ({ page }) => {
@@ -118,7 +118,7 @@ test('profile retains original panels while saving details, passwords and loggin
   expect(calls.find(call => call.path === '/user/profile').body.display_name).toBe('Updated Member');
   await expect(page.getByRole('heading', { name: 'Updated Member' })).toBeVisible();
   await page.getByRole('button', { name: 'Payments', exact: true }).click(); await expect(page.locator('tbody')).toContainText('test-payment');
-  await page.getByRole('button', { name: 'My subscriptions', exact: true }).click(); await expect(page.locator('dl')).toContainText('€97.00');
+  await page.getByRole('button', { name: 'My subscriptions', exact: true }).click(); await expect(page.locator('dl').filter({ has: page.getByText('Recurring Amount', { exact: true }) })).toContainText('€97.00');
   await page.getByRole('button', { name: 'Change Password', exact: true }).click();
   await page.locator('[name="current"]').fill('OldPassword123'); await page.locator('[name="next"]').fill('NewPassword123'); await page.locator('[name="confirm"]').fill('Different123');
   await page.getByRole('button', { name: 'Update Password', exact: true }).click(); await expect(page.getByRole('status')).toContainText('Passwords do not match');

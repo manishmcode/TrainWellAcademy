@@ -1,6 +1,8 @@
+import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, lazy, Suspense, useState } from "react";
 import {
   clearAuthSession,
+  consumeLoginRedirect,
   getToken,
   getTokenExpiry,
   getUser,
@@ -47,12 +49,12 @@ function Home() {
                 <em className="text-white not-italic">HEALTHIER YOU? </em>
               </h2>
             </div>
-            <a
-              href="/signup/"
+            <Link
+              to="/signup/"
               className="w-fit bg-ink px-5 py-4 font-bold text-cream"
             >
               GET STARTED ↗
-            </a>
+            </Link>
           </div>
         </section>
       </main>
@@ -63,10 +65,11 @@ function Home() {
 }
 
 function Redirect({ to, onRedirect }) {
+  const navigate = useNavigate();
   useEffect(() => {
     if (onRedirect) onRedirect(to);
-    else window.location.replace(to);
-  }, [onRedirect, to]);
+    else navigate(to, { replace: true });
+  }, [navigate, onRedirect, to]);
   return (
     <Page title="Redirecting">
       <Notice>Redirecting...</Notice>
@@ -89,9 +92,9 @@ function NotFound() {
           <p className="mx-auto mt-5 max-w-md text-sm leading-6 text-ink/60">
             The link may be incorrect or the page may have moved.
           </p>
-          <a href="/" className="btn mt-8 bg-ink text-cream hover:bg-coral">
+          <Link to="/" className="btn mt-8 bg-ink text-cream hover:bg-coral">
             BACK HOME
-          </a>
+          </Link>
         </section>
       </main>
       <Footer />
@@ -99,6 +102,7 @@ function NotFound() {
   );
 }
 export default function App({ pathname, onRedirect }) {
+  const navigate = useNavigate();
   const path =
     (pathname || window.location.pathname).replace(/\/+$/, "") || "/";
   const [token, setToken] = useState(null);
@@ -117,6 +121,7 @@ export default function App({ pathname, onRedirect }) {
       setLibraryAccessReady(false);
       window.clearTimeout(expiryTimer);
       const nextToken = getToken();
+      if (consumeLoginRedirect()) navigate('/login/', { replace: true });
       if (!active) return;
       setToken(nextToken);
       setSessionReady(true);
@@ -126,11 +131,16 @@ export default function App({ pathname, onRedirect }) {
         return;
       }
       const expiresAt = getTokenExpiry();
-      if (expiresAt)
-        expiryTimer = window.setTimeout(
-          clearAuthSession,
-          Math.max(0, expiresAt - Date.now()),
-        );
+      if (expiresAt) {
+        const checkExpiry = () => {
+          const remaining = expiresAt - Date.now();
+          if (remaining <= 0) {
+            if (localStorage.getItem('trainwellacademy_token') === nextToken)
+              clearAuthSession({ reason: 'expired' });
+          } else expiryTimer = window.setTimeout(checkExpiry, Math.min(remaining, 2147483647));
+        };
+        checkExpiry();
+      }
       if (getUser()?.is_admin === true) {
         setLibraryAccessReady(true);
         return;
@@ -151,16 +161,16 @@ export default function App({ pathname, onRedirect }) {
         if (active && revision === requestRevision) setLibraryAccessReady(true);
       }
     };
-    changed();
     window.addEventListener("authchange", changed);
     window.addEventListener("storage", changed);
+    changed();
     return () => {
       active = false;
       window.clearTimeout(expiryTimer);
       window.removeEventListener("authchange", changed);
       window.removeEventListener("storage", changed);
     };
-  }, []);
+  }, [navigate]);
   // Do not evaluate route guards until local storage has restored the session.
   // `pathname` is always supplied by the client router, so using it as the
   // readiness condition caused valid profile and library visits to redirect
@@ -188,12 +198,11 @@ export default function App({ pathname, onRedirect }) {
     return <Redirect to="/live-classes/" onRedirect={onRedirect} />;
   if (token && ["/login", "/signup"].includes(path))
     return <Redirect to="/library/" onRedirect={onRedirect} />;
-  if (!token && ["/profile", "/live-classes"].includes(path))
+  if (!token && ["/profile", "/live-classes", "/library"].includes(path))
     return <Redirect to="/login/" onRedirect={onRedirect} />;
   if (path === "/live-classes" && !admin)
     return <Redirect to="/library/" onRedirect={onRedirect} />;
   if (path === "/library") {
-    if (!token) return <Redirect to="/pricing/" onRedirect={onRedirect} />;
     if (!libraryAccessReady)
       return (
         <Page title="Loading">
@@ -202,7 +211,7 @@ export default function App({ pathname, onRedirect }) {
       );
     if (membershipError) return (
       <Page title="Membership unavailable">
-        <Notice>{membershipError}</Notice>
+        <Notice error>{membershipError}</Notice>
         <button className="btn mt-5" onClick={() => window.dispatchEvent(new Event('authchange'))}>Try again</button>
       </Page>
     );
@@ -215,6 +224,7 @@ export default function App({ pathname, onRedirect }) {
     "/login": Login,
     "/signup": Signup,
     "/profile": Profile,
+    "/live-classes": AdminLiveClasses,
     "/checkout": Checkout,
     "/library": Library,
     "/unsubscribe": Unsubscribe,

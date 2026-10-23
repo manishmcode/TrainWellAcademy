@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import Footer from './Footer';
 import Header from './Header';
 import { company, supportMailto } from '../company';
@@ -36,7 +37,7 @@ export default function Imprint() {
             </div>
           </div>
         </div>
-        <a href="/" className="btn mt-8">BACK TO TRAINWELL ↗</a>
+        <Link to="/" className="btn mt-8">BACK TO TRAINWELL ↗</Link>
       </section>
          <Footer />
     </main>

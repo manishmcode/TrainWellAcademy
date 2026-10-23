@@ -1,11 +1,18 @@
 const TOKEN = 'trainwellacademy_token';
 const USER = 'trainwellacademy_user';
 const LIBRARY_ACCESS = 'trainwellacademy_library_access';
+let loginRedirectPending = false;
+export function consumeLoginRedirect() {
+  const pending = loginRedirectPending;
+  loginRedirectPending = false;
+  return pending;
+}
 function setAuthCookie(token) {
   if (typeof document === 'undefined') return;
   document.cookie = `${TOKEN}=${encodeURIComponent(token)}; path=/; max-age=2592000; SameSite=Lax${window.location?.protocol === 'https:' ? '; Secure' : ''}`;
 }
-export function clearAuthSession() {
+export function clearAuthSession({ reason } = {}) {
+  if (reason === 'invalid' || reason === 'expired') loginRedirectPending = true;
   localStorage.removeItem(TOKEN);
   localStorage.removeItem(USER);
   localStorage.removeItem('trainwellacademy_has_active_plan');
@@ -23,12 +30,14 @@ export function getToken() {
     return null;
   }
   try {
-    const part = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+    const parts = token.split('.');
+    if (parts.length !== 3 || parts.some(part => !part)) throw new Error('Invalid session');
+    const part = parts[1].replace(/-/g, '+').replace(/_/g, '/');
     const payload = JSON.parse(atob(part));
-    if (!payload.exp || payload.exp * 1000 <= Date.now()) throw new Error('Expired session');
+    if (!Number.isFinite(payload.exp) || payload.exp * 1000 <= Date.now()) throw new Error('Expired session');
     setAuthCookie(token);
     return token;
-  } catch { clearAuthSession(); return null; }
+  } catch { clearAuthSession({ reason: 'invalid' }); return null; }
 }
 export function getTokenExpiry() {
   const token = getToken();
@@ -69,6 +78,7 @@ export function getCourseAccessPath() {
 }
 export function saveAuthSession({ token, user }) {
   if (!token || !user) throw new Error('The server returned an invalid session.');
+  loginRedirectPending = false;
   localStorage.setItem(TOKEN, token);
   saveUser(user);
   sessionStorage.removeItem(LIBRARY_ACCESS);
