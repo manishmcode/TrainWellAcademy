@@ -42,3 +42,24 @@ export async function fetchLibrary() {
   if (!Array.isArray(data)) throw new Error('Invalid library response.');
   return data.map(row => ({ ...row, cards: (row.cards || []).map(normalizeCard) }));
 }
+
+export async function fetchLibraryCategories() {
+  const data = await request('/library/categories', { cache: false });
+  if (!Array.isArray(data)) throw new Error('Invalid library categories response.');
+  return data.filter(category => typeof category?.title === 'string');
+}
+
+export async function fetchLibraryPage({ page = 1, limit = 24, category } = {}) {
+  const query = new URLSearchParams({ page: String(page), limit: String(limit) });
+  if (category) query.set('category', category);
+
+  const data = await request(`/library/items?${query}`, { cache: false });
+  if (!data || !Array.isArray(data.items) || !data.pagination) {
+    throw new Error('Invalid paginated library response.');
+  }
+
+  return {
+    items: data.items.map(normalizeCard),
+    pagination: data.pagination,
+  };
+}
