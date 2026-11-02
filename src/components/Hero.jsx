@@ -1,14 +1,21 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Play } from 'lucide-react';
 import { getCourseAccessPath } from '../services/auth';
 
 export default function Hero() {
+  const navigate = useNavigate();
+
+  const exploreCourses = event => {
+    event.preventDefault();
+    navigate(getCourseAccessPath());
+  };
+
   return <section id="top" className="shell grid min-h-[700px] gap-x-10 gap-y-0 pt-14 lg:grid-cols-[.8fr_1.2fr] lg:items-center">
     <div>
       <span className="eyebrow">8 FITNESS CATEGORIES / ON DEMAND</span>
       <h1 className="display my-10 text-[clamp(4.5rem,8vw,7.5rem)]">YOUR NEXT<br />LEVEL <em className="not-italic text-coral">STARTS<br />HERE.</em></h1>
       <p className="max-w-xl text-base leading-7 text-ink/65">Explore 74 on-demand lessons across Pilates, bodyweight training, home workouts, nutrition, kettlebells and more—at your own pace.</p>
-      <div className="mt-8 flex flex-wrap gap-4"><Link className="btn" to="#courses">EXPLORE COURSES ↗</Link></div>
+      <div className="mt-8 flex flex-wrap gap-4"><Link className="btn" to="/pricing/" onClick={exploreCourses}>EXPLORE COURSES ↗</Link></div>
     </div>
     <div className="relative h-[570px] overflow-hidden bg-ink"><img src="/assets/home/hero-fitness-1200.webp" srcSet="/assets/home/hero-fitness-768.webp 768w, /assets/home/hero-fitness-1200.webp 1200w" sizes="(min-width: 1024px) 1100px, 100vw" alt="Athlete preparing for a home workout" width="1100" height="570" fetchPriority="high" /><Link to={getCourseAccessPath()} aria-label="Explore the featured fitness program" className="absolute left-1/2 top-1/2 grid size-20 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-coral text-cream"><Play fill="currentColor" /></Link><div className="absolute bottom-5 left-5 bg-cream p-4 pr-16"><small className="font-bold">FEATURED PROGRAM</small><p className="text-lg font-bold">Ultimate Home Workout Plan</p><small>10 practical on-demand lessons</small></div></div>
     <div className="col-span-full mt-6 grid grid-cols-1 border-t border-ink sm:grid-cols-3">

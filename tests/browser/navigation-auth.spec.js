@@ -31,9 +31,17 @@ test('internal links navigate without reload and support history and hash scroll
   await page.goBack();
   await expect(page).toHaveURL(/\/$/);
   await page.getByRole('link', { name: 'EXPLORE COURSES' }).click();
-  await expect(page).toHaveURL(/#courses$/);
-  await expect(page.locator('#courses')).toBeInViewport();
+  await expect(page).toHaveURL(/\/pricing\//);
   expect(errors).toEqual([]);
+});
+
+test('active members open the course library from the home CTA', async ({ page }) => {
+  await seedSession(page, jwt(4102444800));
+  await mockApi(page, { active: true });
+  await page.goto('/');
+  await expect(page.getByRole('link', { name: 'Open profile' })).toBeVisible();
+  await page.getByRole('link', { name: 'EXPLORE COURSES' }).click();
+  await expect(page).toHaveURL(/\/library\//);
 });
 
 test('guest library and malformed or expired tokens redirect to login', async ({ page }) => {

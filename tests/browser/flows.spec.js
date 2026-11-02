@@ -5,6 +5,7 @@ const user = { id: 7, name: 'Sample Member', email: 'member@example.com', is_adm
 const plans = [{ id: 1, name: 'Starter', price: '29', currency: 'EUR', is_active: true, features: [] }, { id: 2, name: 'Complete', price: '97', currency: 'EUR', is_active: true, features: [{ name: 'Live classes', is_included: true }] }];
 const dashboard = { firstname: 'Sample', lastname: 'Member', email: user.email, user_meta: { display_name: 'Sample Member' }, has_active_plan: true, subscriptions: [{ id: 1, plan_id: 2, plan_name: 'Complete', price: 97, currency: 'EUR', status: 'active', payment_status: 'paid', starts_at: '2020-01-01', ends_at: '2099-01-01', payment_reference: 'test-payment', billing_frequency: 'monthly' }], payments: [{ payment_id: 'test-payment', price: 97, status: 'paid', date: '2026-01-01' }], country: 'DE', address: 'Example Street 1', city: 'Berlin', postal_code: '10115', phone: '+4915123456789' };
 const session = { id: 1, name: 'Live strength session', class_date: '2020-01-01T10:00:00Z', end_date: '2099-01-01T11:00:00Z', end_time: '11:00', timezone: 'UTC', is_active: true, plan_ids: [2], url: 'https://example.com/meeting' };
+const libraryItems = Array.from({ length: 26 }, (_, index) => ({ title: index === 0 ? 'Foundations resource' : `Strength resource ${index + 1}`, image: '/assets/sepa.webp', link: 'https://example.com/resource.pdf', category: 'Strength' }));
 
 async function signIn(page, admin = false, expired = false) {
   await page.addInitScript(({ user, token, admin, expired }) => {
@@ -28,7 +29,14 @@ async function api(page, options = {}) {
     else if (path === '/auth/login' || path === '/auth/signup') data = { token, user: { ...user, is_admin: !!options.admin } };
     else if (path === '/user/dashboard') data = { ...dashboard, ...options.dashboard };
     else if (path === '/user/profile' || path === '/auth/change-password') data = null;
-    else if (path === '/library') data = options.emptyLibrary ? [] : [{ title: 'Strength', cards: [{ title: 'Foundations resource', image: '/assets/sepa.webp', link: 'https://example.com/resource.pdf' }] }];
+    else if (path === '/library') data = options.emptyLibrary ? [] : [{ title: 'Strength', cards: [libraryItems[0]] }];
+    else if (path === '/library/categories') data = options.emptyLibrary ? [] : [{ title: 'Strength', item_count: libraryItems.length }];
+    else if (path === '/library/items') {
+      const query = new URL(request.url()).searchParams;
+      const page = Number(query.get('page') || 1), limit = Number(query.get('limit') || 24);
+      const items = options.emptyLibrary ? [] : libraryItems.filter(item => !query.has('category') || item.category === query.get('category'));
+      data = { items: items.slice((page - 1) * limit, page * limit), pagination: { page, limit, total: items.length, total_pages: Math.ceil(items.length / limit), has_more: page * limit < items.length } };
+    }
     else if (path === '/classes' && request.method() === 'GET') data = options.emptyClasses ? [] : [session];
     else if (path.startsWith('/classes/') && path.endsWith('/join')) data = { join_path: '/classes/1/join/test-token', expires_in: 60 };
     else if (path.startsWith('/classes')) data = { ...session, ...body };
@@ -107,6 +115,16 @@ test('login errors, successful login and signup password validation', async ({ p
   await page.locator('form button[type="submit"]').click(); await expect(page.getByRole('alert')).toContainText('Invalid credentials');
   state.fail = null; await page.locator('form button[type="submit"]').click();
   await expect(page).toHaveURL(/\/library\//); await expect(page.getByText('Foundations resource')).toBeVisible();
+});
+
+test('library defaults to all courses and loads later pages while scrolling', async ({ page }) => {
+  await signIn(page); const calls = await api(page);
+  await page.goto('/library/');
+  await expect(page.getByRole('button', { name: /All Courses/ })).toHaveClass(/bg-ink/);
+  await expect(page.locator('article')).toHaveCount(24);
+  await page.locator('article').last().scrollIntoViewIfNeeded();
+  await expect(page.locator('article')).toHaveCount(26);
+  expect(calls.filter(call => call.path === '/library/items')).toHaveLength(2);
 });
 
 test('profile retains original panels while saving details, passwords and logging out', async ({ page }) => {

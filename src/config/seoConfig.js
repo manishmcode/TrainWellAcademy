@@ -1,6 +1,6 @@
 import { canonicalPath, publicRoutes, knownRoutes, normalizePath } from './routes.js';
 
-const labels = { '/pricing': 'Membership plans', '/unsubscribe': 'Cancel Your Subscription', '/imprint': 'Imprint', '/privacy': 'Privacy policy', '/terms': 'Terms and conditions', '/login': 'Login', '/signup': 'Create account', '/checkout': 'Checkout', '/library': 'Library', '/profile': 'My account', '/live-classes': 'Manage live classes' };
+const labels = { '/pricing': 'Membership plans', '/unsubscribe': 'Unsubscribe', '/imprint': 'Imprint', '/privacy': 'Privacy policy', '/terms': 'Terms and conditions', '/login': 'Login', '/signup': 'Create account', '/checkout': 'Checkout', '/library': 'Library', '/profile': 'My account', '/live-classes': 'Manage live classes' };
 const pageTypes = { '/library': 'CollectionPage' };
 const pageUrl = (route, siteUrl) => new URL(route === '/' ? '/' : `${route}/`, siteUrl).href;
 
