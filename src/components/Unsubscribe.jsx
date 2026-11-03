@@ -73,10 +73,10 @@ export default function Unsubscribe() {
 
                 <form method="post" onSubmit={submit} className="mt-7">{error && <p role="alert" className="text-red-700">{error}</p>}<fieldset disabled={busy}>
                   <div className="grid min-w-0 gap-5 sm:grid-cols-2">
-                    <label className="min-w-0 text-[11px] font-bold tracking-[.16em] text-[#8f7769]">FIRST NAME <span className="text-[#c65432]">*</span><input className={inputClass} name="firstName" autoComplete="given-name" placeholder="First name" required /></label>
-                    <label className="min-w-0 text-[11px] font-bold tracking-[.16em] text-[#8f7769]">LAST NAME <span className="text-[#c65432]">*</span><input className={inputClass} name="lastName" autoComplete="family-name" placeholder="Last name" required /></label>
+                    <label className="min-w-0 text-[11px] font-bold tracking-[.16em] text-[#8f7769]">FIRST NAME <span className="text-[#c65432]">*</span><input className={inputClass} name="firstName" autoComplete="given-name" placeholder="John" required /></label>
+                    <label className="min-w-0 text-[11px] font-bold tracking-[.16em] text-[#8f7769]">LAST NAME <span className="text-[#c65432]">*</span><input className={inputClass} name="lastName" autoComplete="family-name" placeholder="Doe" required /></label>
                   </div>
-                  <label className="mt-5 block min-w-0 text-[11px] font-bold tracking-[.16em] text-[#8f7769]">EMAIL <span className="text-[#c65432]">*</span><input className={inputClass} type="email" name="email" autoComplete="email" placeholder="you@example.com" required /></label>
+                  <label className="mt-5 block min-w-0 text-[11px] font-bold tracking-[.16em] text-[#8f7769]">EMAIL <span className="text-[#c65432]">*</span><input className={inputClass} type="email" name="email" autoComplete="email" placeholder="example@gmail.com" required /></label>
                   <label className="mt-5 block min-w-0 text-[11px] font-bold tracking-[.16em] text-[#8f7769]">LAST 5 DIGITS OF IBAN <span className="text-[#c65432]">*</span><input className={inputClass} name="iban" inputMode="numeric" pattern="[0-9]{5}" maxLength="5" placeholder="e.g. 12345" required /></label>
 
                   <div className="mt-5 flex items-start gap-3 border border-ink/15 bg-cream p-4 text-xs leading-5 text-ink/60">
@@ -86,7 +86,7 @@ export default function Unsubscribe() {
 
                   <label className="mt-4 flex cursor-pointer items-start gap-3 border border-ink/15 bg-cream p-4 text-sm leading-6">
                     <input className="mt-1 size-4 shrink-0 accent-coral" type="checkbox" required />
-                    <span>I confirm that I want to cancel my subscription. Accordingly, no further billing will be made.</span>
+                    <span>I acknowledge that my subscription will be cancelled and access to all premium materials will end once my current billing cycle is complete.</span>
                   </label>
 
                   <button className="text-white btn group mt-5 w-full gap-3 bg-coral text-ink hover:bg-ink hover:text-cream" type="submit">
